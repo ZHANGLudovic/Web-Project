@@ -1,0 +1,91 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+html, body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+
+button {
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    background-color: #2f80ed;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(47, 128, 237, 0.3);
+}
+
+
+button:active {
+    transform: translateY(0);
+}
+
+
+input, select, textarea {
+    font-family: inherit;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 10px;
+    transition: all 0.3s ease;
+}
+
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #2f80ed;
+    box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.1);
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+    color: #222;
+    margin-bottom: 10px;
+}
+
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease;
+}
+
+.slide-in-down {
+    animation: slideInDown 0.3s ease;
+}
