@@ -3,13 +3,13 @@
     <div class="terrain-header">
       <h3>{{ terrain.nom }}</h3>
       <div class="action-buttons-top">
-        <button class="btn-modifier" @click="handleModifier" title="Modifier">✏️</button>
-        <button class="btn-supprimer" @click="handleSupprimer" title="Supprimer">🗑️</button>
+        <button class="btn-modifier" @click="handleModifier" title="Modifier">Edit</button>
+        <button class="btn-supprimer" @click="handleSupprimer" title="Supprimer">Delete</button>
       </div>
     </div>
     <div class="terrain-info">
       <p><strong>📍 Ville:</strong> {{ terrain.ville }}</p>
-      <span class="sport-badge">⚽ {{ terrain.sport }}</span>
+      <span class="sport-badge"> {{ terrain.sport }}</span>
     </div>
     <div class="terrain-footer">
       <button class="btn-details" @click="handleDetails">Détails</button>
