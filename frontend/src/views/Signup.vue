@@ -11,7 +11,7 @@
         </select>
 
 
-        <button>S'inscrire</button>
+        <button @click="signup">S'inscrire</button>
     </div>
 </template>
 
@@ -26,6 +26,25 @@ export default {
         role: 'user'
         };
     },
+    methods: {
+        signup() {
+            fetch("http://localhost:3000/auth/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: this.email, password: this.password })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    alert("Erreur: " + data.error);
+                } else {
+                    alert("Inscription réussie!");
+                    this.$router.push('/login');
+                }
+            })
+            .catch(err => alert("Erreur: " + err.message));
+        }
+    }
 };
 </script>
 
