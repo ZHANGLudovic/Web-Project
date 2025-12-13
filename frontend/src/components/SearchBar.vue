@@ -3,7 +3,7 @@
     <input 
       v-model="searchQuery" 
       type="text" 
-      placeholder="Rechercher..."
+      placeholder="Search..."
       class="search-input"
       @input="handleSearch"
     />

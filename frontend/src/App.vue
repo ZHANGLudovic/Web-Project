@@ -2,80 +2,80 @@
   <div id="app">
   <HeaderBar />
   <div class="button-container">
-    <AddTerrainButton @add-terrain="handleAddTerrain" />
+    <AddFieldButton @add-field="handleAddField" />
   </div>
-  <AddTerrainForm v-if="showForm" @close="showForm = false" @submit="submitTerrain" />
-  <EditTerrainForm v-if="showEditForm" :terrain="terrainToEdit" @close="showEditForm = false" @submit="submitEditTerrain" />
-  <router-view :key="terrainRefresh" :terrains="terrains" @update-terrains="updateTerrains" @edit-terrain="handleEditTerrain" />
+  <AddFieldForm v-if="showForm" @close="showForm = false" @submit="submitField" />
+  <EditFieldForm v-if="showEditForm" :field="fieldToEdit" @close="showEditForm = false" @submit="submitEditField" />
+  <router-view :key="fieldRefresh" :fields="fields" @update-fields="updateFields" @edit-field="handleEditField" />
   </div>
 </template>
 
 
 <script>
 import HeaderBar from './components/HeaderBar.vue';
-import AddTerrainButton from './components/AddTerrainButton.vue';
-import AddTerrainForm from './components/AddTerrainForm.vue';
-import EditTerrainForm from './components/EditTerrainForm.vue';
+import AddFieldButton from './components/AddFieldButton.vue';
+import AddFieldForm from './components/AddFieldForm.vue';
+import EditFieldForm from './components/EditFieldForm.vue';
 
 export default {
-components: { HeaderBar, AddTerrainButton, AddTerrainForm, EditTerrainForm },
+components: { HeaderBar, AddFieldButton, AddFieldForm, EditFieldForm },
 data() {
   return {
     showForm: false,
     showEditForm: false,
-    terrains: [],
-    terrainToEdit: null,
-    terrainRefresh: 0
+    fields: [],
+    fieldToEdit: null,
+    fieldRefresh: 0
   };
 },
 methods: {
-  handleAddTerrain() {
+  handleAddField() {
     this.showForm = true;
   },
-  handleEditTerrain(terrain) {
-    this.terrainToEdit = terrain;
+  handleEditField(field) {
+    this.fieldToEdit = field;
     this.showEditForm = true;
   },
-  submitTerrain(terrainData) {
-    const newTerrain = {
+  submitField(fieldData) {
+    const newField = {
       id: Date.now(),
-      nom: terrainData.name,
-      sport: terrainData.type,
-      adresse: terrainData.location,
-      ville: terrainData.ville,
-      taille: terrainData.size,
-      horaires: terrainData.horaires,
-      date: terrainData.date,
-      prix: terrainData.prix,
-      description: terrainData.description
+      nom: fieldData.name,
+      sport: fieldData.type,
+      adresse: fieldData.location,
+      ville: fieldData.ville,
+      taille: fieldData.size,
+      horaires: fieldData.horaires,
+      date: fieldData.date,
+      prix: fieldData.prix,
+      description: fieldData.description
     };
-    this.terrains.push(newTerrain);
-    this.terrainRefresh++;
-    console.log('Nouveau terrain:', newTerrain);
+    this.fields.push(newField);
+    this.fieldRefresh++;
+    console.log('New field:', newField);
     this.showForm = false;
   },
-  submitEditTerrain(terrainData) {
-    const index = this.terrains.findIndex(t => t.id === this.terrainToEdit.id);
+  submitEditField(fieldData) {
+    const index = this.fields.findIndex(f => f.id === this.fieldToEdit.id);
     if (index !== -1) {
-      this.terrains[index] = {
-        ...this.terrains[index],
-        nom: terrainData.name,
-        sport: terrainData.type,
-        adresse: terrainData.location,
-        ville: terrainData.ville,
-        taille: terrainData.size,
-        horaires: terrainData.horaires,
-        date: terrainData.date,
-        prix: terrainData.prix,
-        description: terrainData.description
+      this.fields[index] = {
+        ...this.fields[index],
+        nom: fieldData.name,
+        sport: fieldData.type,
+        adresse: fieldData.location,
+        ville: fieldData.ville,
+        taille: fieldData.size,
+        horaires: fieldData.horaires,
+        date: fieldData.date,
+        prix: fieldData.prix,
+        description: fieldData.description
       };
     }
-    this.$emit('update-terrains', this.terrains);
-    this.terrainRefresh++;
+    this.$emit('update-fields', this.fields);
+    this.fieldRefresh++;
     this.showEditForm = false;
   },
-  updateTerrains(newTerrains) {
-    this.terrains = newTerrains;
+  updateFields(newFields) {
+    this.fields = newFields;
   }
 },
 };
@@ -83,14 +83,47 @@ methods: {
 
 
 <style>
-body {
+* {
+  box-sizing: border-box;
+}
+
+html, body {
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+}
+
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .button-container {
-  max-width: 900px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 30px 20px;
+  width: 100%;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .button-container {
+    padding: 20px 15px;
+  }
 }
 </style>

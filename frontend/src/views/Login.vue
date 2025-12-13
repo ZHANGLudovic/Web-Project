@@ -1,9 +1,9 @@
 <template>
     <div class="form-container">
-        <h2>Connexion</h2>
+        <h2>Login</h2>
         <input type="email" placeholder="Email" v-model="email" />
-        <input type="password" placeholder="Mot de passe" v-model="password" />
-        <button @click="login">Se connecter</button>
+        <input type="password" placeholder="Password" v-model="password" />
+        <button @click="login">Login</button>
     </div>
 </template>
 
@@ -27,13 +27,13 @@ export default {
             .then(res => res.json())
             .then(data => {
                 if (data.error) {
-                    alert("Erreur: " + data.error);
+                    alert("Error: " + data.error);
                 } else {
-                    alert("Connexion réussie!");
+                    alert("Login successful!");
                     this.$router.push('/');
                 }
             })
-            .catch(err => alert("Erreur: " + err.message));
+            .catch(err => alert("Error: " + err.message));
         }
     }
 };

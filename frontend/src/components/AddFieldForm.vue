@@ -2,55 +2,55 @@
   <div class="modal-overlay" @click="close">
     <div class="modal-content" @click.stop>
       <div class="modal-header">
-        <h2>Modifier le terrain</h2>
+        <h2>Add a new field</h2>
         <button @click="close" class="close-btn">&times;</button>
       </div>
       <form @submit.prevent="submit">
         <div class="form-group">
-          <label for="name">Nom du terrain:</label>
+          <label for="name">Field Name:</label>
           <input v-model="form.name" type="text" id="name" required>
         </div>
         <div class="form-group">
-          <label for="location">Adresse:</label>
+          <label for="location">Address:</label>
           <input v-model="form.location" type="text" id="location" required>
         </div>
         <div class="form-group">
-          <label for="ville">Ville:</label>
+          <label for="ville">City:</label>
           <input v-model="form.ville" type="text" id="ville" required>
         </div>
         <div class="form-group">
-          <label for="size">Taille (m²):</label>
+          <label for="size">Size (m²):</label>
           <input v-model="form.size" type="number" id="size" required>
         </div>
         <div class="form-group">
-          <label for="type">Type de sport:</label>
+          <label for="type">Sport Type:</label>
           <select v-model="form.type" id="type" required>
-            <option value="">Sélectionner un sport</option>
+            <option value="">Select a sport</option>
             <option v-for="sport in sports" :key="sport" :value="sport">
               {{ sport }}
             </option>
           </select>
         </div>
         <div class="form-group">
-          <label for="horaires">Horaires:</label>
+          <label for="horaires">Hours:</label>
           <input v-model="form.horaires" type="text" id="horaires" placeholder="Ex: 09:00 - 18:00">
         </div>
         <div class="form-group">
-          <label for="date">Date disponible:</label>
+          <label for="date">Available Date:</label>
           <input v-model="form.date" type="date" id="date">
         </div>
         <div class="form-group">
-          <label for="prix">Prix (€/heure):</label>
+          <label for="prix">Price (€/hour):</label>
           <input v-model="form.prix" type="number" id="prix" step="0.01">
         </div>
         <div class="form-group">
-          <label for="description">Description (max 500 caractères):</label>
+          <label for="description">Description (max 500 characters):</label>
           <textarea v-model="form.description" id="description" maxlength="500" rows="4"></textarea>
           <span class="char-count">{{ form.description.length }}/500</span>
         </div>
         <div class="form-actions">
-          <button type="submit" class="submit-btn">Enregistrer</button>
-          <button type="button" @click="close" class="cancel-btn">Annuler</button>
+          <button type="submit" class="submit-btn">Add</button>
+          <button type="button" @click="close" class="cancel-btn">Cancel</button>
         </div>
       </form>
     </div>
@@ -59,13 +59,7 @@
 
 <script>
 export default {
-  name: 'EditTerrainForm',
-  props: {
-    terrain: {
-      type: Object,
-      required: true
-    }
-  },
+  name: 'AddFieldForm',
   data() {
     return {
       form: {
@@ -82,33 +76,14 @@ export default {
       sports: ['Football', 'Basketball', 'Tennis', 'Volleyball']
     };
   },
-  watch: {
-    terrain: {
-      immediate: true,
-      handler(newTerrain) {
-        if (newTerrain) {
-          this.form = {
-            name: newTerrain.nom,
-            location: newTerrain.adresse || '',
-            ville: newTerrain.ville,
-            size: newTerrain.taille || '',
-            type: newTerrain.sport,
-            horaires: newTerrain.horaires || '',
-            date: newTerrain.date || '',
-            prix: newTerrain.prix || '',
-            description: newTerrain.description || ''
-          };
-        }
-      }
-    }
-  },
   methods: {
     submit() {
       if (!this.form.type) {
-        alert('Veuillez sélectionner un type de sport');
+        alert('Please select a sport type');
         return;
       }
       this.$emit('submit', this.form);
+      this.form = { name: '', location: '', ville: '', size: '', type: '', horaires: '', date: '', prix: '', description: '' };
     },
     close() {
       this.$emit('close');
@@ -124,27 +99,50 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  padding: 20px;
+  overflow-y: auto;
 }
 
 .modal-content {
   background-color: white;
-  border-radius: 8px;
-  padding: 30px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 0;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  padding: 25px 30px;
+  background: linear-gradient(135deg, #2f80ed 0%, #1e5cb8 100%);
+  color: white;
+  border-radius: 12px 12px 0 0;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
 }
 
 .close-btn {
@@ -152,107 +150,102 @@ export default {
   border: none;
   font-size: 28px;
   cursor: pointer;
-  color: #666;
+  color: white;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.close-btn:hover {
+  transform: rotate(90deg);
+}
+
+form {
+  padding: 30px;
+  max-height: 70vh;
+  overflow-y: auto;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 18px;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
   font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
+.form-group input,
 .form-group select {
   width: 100%;
-  padding: 8px;
+  padding: 10px 12px;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 14px;
   background-color: white;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #2f80ed;
+  box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.1);
 }
 
 .form-group textarea {
   width: 100%;
-  padding: 8px;
+  padding: 10px 12px;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 14px;
   font-family: Arial, sans-serif;
   resize: vertical;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-group textarea:focus {
+  outline: none;
+  border-color: #2f80ed;
+  box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.1);
 }
 
 .char-count {
   display: block;
   font-size: 12px;
   color: #999;
-  margin-top: 4px;
-}
-
-.checkbox-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.checkbox-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-
-.checkbox-item input[type="checkbox"] {
-  cursor: pointer;
-}
-
-.checkbox-item input[type="radio"] {
-  cursor: pointer;
-}
-
-.radio-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-top: 8px;
-}
-
-.radio-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.radio-item input[type="radio"] {
-  cursor: pointer;
+  margin-top: 6px;
+  text-align: right;
 }
 
 .form-actions {
   display: flex;
-  gap: 10px;
-  margin-top: 20px;
+  gap: 12px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
 }
 
 .submit-btn, .cancel-btn {
   flex: 1;
-  padding: 10px;
+  padding: 12px 20px;
   border: none;
-  border-radius: 4px;
-  font-size: 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .submit-btn {
@@ -262,14 +255,40 @@ export default {
 
 .submit-btn:hover {
   background-color: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
 }
 
 .cancel-btn {
-  background-color: #f44336;
-  color: white;
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #ddd;
 }
 
 .cancel-btn:hover {
-  background-color: #da190b;
+  background-color: #eeeeee;
+  border-color: #ccc;
+}
+
+/* Scrollbar styling */
+form::-webkit-scrollbar {
+  width: 6px;
+}
+
+form::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+form::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+form::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 </style>

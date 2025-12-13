@@ -2,55 +2,55 @@
   <div class="modal-overlay" @click="close">
     <div class="modal-content" @click.stop>
       <div class="modal-header">
-        <h2>Ajouter un nouveau terrain</h2>
+        <h2>Edit Field</h2>
         <button @click="close" class="close-btn">&times;</button>
       </div>
       <form @submit.prevent="submit">
         <div class="form-group">
-          <label for="name">Nom du terrain:</label>
+          <label for="name">Field Name:</label>
           <input v-model="form.name" type="text" id="name" required>
         </div>
         <div class="form-group">
-          <label for="location">Adresse:</label>
+          <label for="location">Address:</label>
           <input v-model="form.location" type="text" id="location" required>
         </div>
         <div class="form-group">
-          <label for="ville">Ville:</label>
+          <label for="ville">City:</label>
           <input v-model="form.ville" type="text" id="ville" required>
         </div>
         <div class="form-group">
-          <label for="size">Taille (m²):</label>
+          <label for="size">Size (m²):</label>
           <input v-model="form.size" type="number" id="size" required>
         </div>
         <div class="form-group">
-          <label for="type">Type de sport:</label>
+          <label for="type">Sport Type:</label>
           <select v-model="form.type" id="type" required>
-            <option value="">Sélectionner un sport</option>
+            <option value="">Select a sport</option>
             <option v-for="sport in sports" :key="sport" :value="sport">
               {{ sport }}
             </option>
           </select>
         </div>
         <div class="form-group">
-          <label for="horaires">Horaires:</label>
+          <label for="horaires">Hours:</label>
           <input v-model="form.horaires" type="text" id="horaires" placeholder="Ex: 09:00 - 18:00">
         </div>
         <div class="form-group">
-          <label for="date">Date disponible:</label>
+          <label for="date">Available Date:</label>
           <input v-model="form.date" type="date" id="date">
         </div>
         <div class="form-group">
-          <label for="prix">Prix (€/heure):</label>
+          <label for="prix">Price (€/hour):</label>
           <input v-model="form.prix" type="number" id="prix" step="0.01">
         </div>
         <div class="form-group">
-          <label for="description">Description (max 500 caractères):</label>
+          <label for="description">Description (max 500 characters):</label>
           <textarea v-model="form.description" id="description" maxlength="500" rows="4"></textarea>
           <span class="char-count">{{ form.description.length }}/500</span>
         </div>
         <div class="form-actions">
-          <button type="submit" class="submit-btn">Ajouter</button>
-          <button type="button" @click="close" class="cancel-btn">Annuler</button>
+          <button type="submit" class="submit-btn">Save</button>
+          <button type="button" @click="close" class="cancel-btn">Cancel</button>
         </div>
       </form>
     </div>
@@ -59,7 +59,13 @@
 
 <script>
 export default {
-  name: 'AddTerrainForm',
+  name: 'EditFieldForm',
+  props: {
+    field: {
+      type: Object,
+      required: true
+    }
+  },
   data() {
     return {
       form: {
@@ -76,14 +82,33 @@ export default {
       sports: ['Football', 'Basketball', 'Tennis', 'Volleyball']
     };
   },
+  watch: {
+    field: {
+      immediate: true,
+      handler(newField) {
+        if (newField) {
+          this.form = {
+            name: newField.nom,
+            location: newField.adresse || '',
+            ville: newField.ville,
+            size: newField.taille || '',
+            type: newField.sport,
+            horaires: newField.horaires || '',
+            date: newField.date || '',
+            prix: newField.prix || '',
+            description: newField.description || ''
+          };
+        }
+      }
+    }
+  },
   methods: {
     submit() {
       if (!this.form.type) {
-        alert('Veuillez sélectionner un type de sport');
+        alert('Please select a sport type');
         return;
       }
       this.$emit('submit', this.form);
-      this.form = { name: '', location: '', ville: '', size: '', type: '', horaires: '', date: '', prix: '', description: '' };
     },
     close() {
       this.$emit('close');
@@ -140,7 +165,14 @@ export default {
   font-weight: bold;
 }
 
-.form-group input,
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
 .form-group select {
   width: 100%;
   padding: 8px;
@@ -165,6 +197,47 @@ export default {
   font-size: 12px;
   color: #999;
   margin-top: 4px;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.checkbox-item input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.checkbox-item input[type="radio"] {
+  cursor: pointer;
+}
+
+.radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 8px;
+}
+
+.radio-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.radio-item input[type="radio"] {
+  cursor: pointer;
 }
 
 .form-actions {

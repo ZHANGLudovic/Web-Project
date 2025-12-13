@@ -2,61 +2,61 @@
   <div class="modal-overlay" @click="close">
     <div class="modal-content" @click.stop>
       <div class="modal-header">
-        <h2>{{ terrain.nom }}</h2>
+        <h2>{{ field.nom }}</h2>
         <button @click="close" class="close-btn">&times;</button>
       </div>
       <div class="modal-body">
         <div class="details-grid">
           <div class="detail-section">
-            <h3>Informations Générales</h3>
+            <h3>General Information</h3>
             <div class="detail-item">
               <label>Sport:</label>
-              <span class="sport-badge">{{ terrain.sport }}</span>
+              <span class="sport-badge">{{ field.sport }}</span>
             </div>
             <div class="detail-item">
-              <label>Adresse:</label>
-              <p>{{ terrain.adresse || 'Non renseigné' }}</p>
+              <label>Address:</label>
+              <p>{{ field.adresse || 'Not specified' }}</p>
             </div>
             <div class="detail-item">
-              <label>Ville:</label>
-              <p>{{ terrain.ville }}</p>
-            </div>
-          </div>
-
-          <div class="detail-section">
-            <h3>Caractéristiques</h3>
-            <div class="detail-item">
-              <label>Taille:</label>
-              <p>{{ terrain.taille ? terrain.taille + ' m²' : 'Non renseigné' }}</p>
-            </div>
-            <div class="detail-item">
-              <label>Prix:</label>
-              <p>{{ terrain.prix ? terrain.prix + '€/heure' : 'Non renseigné' }}</p>
+              <label>City:</label>
+              <p>{{ field.ville }}</p>
             </div>
           </div>
 
           <div class="detail-section">
-            <h3>Disponibilités</h3>
+            <h3>Characteristics</h3>
             <div class="detail-item">
-              <label>Horaires:</label>
-              <p>{{ terrain.horaires || 'Non renseigné' }}</p>
+              <label>Size:</label>
+              <p>{{ field.taille ? field.taille + ' m²' : 'Not specified' }}</p>
             </div>
             <div class="detail-item">
-              <label>Date disponible:</label>
-              <p>{{ terrain.date ? formatDate(terrain.date) : 'Non renseigné' }}</p>
+              <label>Price:</label>
+              <p>{{ field.prix ? field.prix + '€/hour' : 'Not specified' }}</p>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h3>Availability</h3>
+            <div class="detail-item">
+              <label>Hours:</label>
+              <p>{{ field.horaires || 'Not specified' }}</p>
+            </div>
+            <div class="detail-item">
+              <label>Available Date:</label>
+              <p>{{ field.date ? formatDate(field.date) : 'Not specified' }}</p>
             </div>
           </div>
         </div>
 
-        <div class="detail-section full-width" v-if="terrain.description">
+        <div class="detail-section full-width" v-if="field.description">
           <h3>Description</h3>
           <div class="description-text">
-            {{ terrain.description }}
+            {{ field.description }}
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button @click="close" class="close-action-btn">Fermer</button>
+        <button @click="close" class="close-action-btn">Close</button>
       </div>
     </div>
   </div>
@@ -64,9 +64,9 @@
 
 <script>
 export default {
-  name: 'TerrainDetails',
+  name: 'FieldDetails',
   props: {
-    terrain: {
+    field: {
       type: Object,
       required: true
     }

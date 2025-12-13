@@ -1,17 +1,17 @@
 <template>
     <div class="form-container">
-        <h2>Inscription</h2>
+        <h2>Sign Up</h2>
         <input type="email" placeholder="Email" v-model="email" />
-        <input type="password" placeholder="Mot de passe" v-model="password" />
+        <input type="password" placeholder="Password" v-model="password" />
 
 
         <select v-model="role">
-            <option value="user">Utilisateur</option>
+            <option value="user">User</option>
             <option value="admin">Admin</option>
         </select>
 
 
-        <button @click="signup">S'inscrire</button>
+        <button @click="signup">Sign Up</button>
     </div>
 </template>
 
@@ -36,13 +36,13 @@ export default {
             .then(res => res.json())
             .then(data => {
                 if (data.error) {
-                    alert("Erreur: " + data.error);
+                    alert("Error: " + data.error);
                 } else {
-                    alert("Inscription réussie!");
+                    alert("Sign up successful!");
                     this.$router.push('/login');
                 }
             })
-            .catch(err => alert("Erreur: " + err.message));
+            .catch(err => alert("Error: " + err.message));
         }
     }
 };

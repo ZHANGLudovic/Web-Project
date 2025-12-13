@@ -1,31 +1,31 @@
 <template>
-  <div class="terrain-card">
-    <div class="terrain-header">
-      <h3>{{ terrain.nom }}</h3>
+  <div class="field-card">
+    <div class="field-header">
+      <h3>{{ field.nom }}</h3>
       <div class="action-buttons-top">
-        <button class="btn-modifier" @click="handleModifier" title="Modifier">Edit</button>
-        <button class="btn-supprimer" @click="handleSupprimer" title="Supprimer">Delete</button>
+        <button class="btn-edit" @click="handleEdit" title="Edit">Edit</button>
+        <button class="btn-delete" @click="handleDelete" title="Delete">Delete</button>
       </div>
     </div>
-    <div class="terrain-info">
-      <p><strong>📍 Ville:</strong> {{ terrain.ville }}</p>
-      <span class="sport-badge"> {{ terrain.sport }}</span>
+    <div class="field-info">
+      <p><strong>📍 City:</strong> {{ field.ville }}</p>
+      <span class="sport-badge"> {{ field.sport }}</span>
     </div>
-    <div class="terrain-footer">
-      <button class="btn-details" @click="handleDetails">Détails</button>
+    <div class="field-footer">
+      <button class="btn-details" @click="handleDetails">Details</button>
       <button 
         v-if="!isReserved" 
-        class="btn-louer" 
-        @click="handleLouer"
+        class="btn-rent" 
+        @click="handleRent"
       >
-        Louer
+        Rent
       </button>
       <button 
         v-else 
-        class="btn-annuler" 
-        @click="handleAnnulerReservation"
+        class="btn-cancel" 
+        @click="handleCancelReservation"
       >
-        Annuler la réservation
+        Cancel Reservation
       </button>
     </div>
   </div>
@@ -33,9 +33,9 @@
 
 <script>
 export default {
-  name: 'TerrainCard',
+  name: 'FieldCard',
   props: {
-    terrain: {
+    field: {
       type: Object,
       required: true
     }
@@ -47,24 +47,24 @@ export default {
   },
   methods: {
     handleDetails() {
-      this.$emit('details', this.terrain.id);
+      this.$emit('details', this.field.id);
     },
-    handleModifier() {
-      this.$emit('modifier', this.terrain.id);
+    handleEdit() {
+      this.$emit('edit', this.field.id);
     },
-    handleSupprimer() {
-      if (confirm(`Êtes-vous sûr de vouloir supprimer "${this.terrain.nom}" ?`)) {
-        this.$emit('supprimer', this.terrain.id);
+    handleDelete() {
+      if (confirm(`Are you sure you want to delete "${this.field.nom}" ?`)) {
+        this.$emit('delete', this.field.id);
       }
     },
-    handleLouer() {
+    handleRent() {
       this.isReserved = true;
-      this.$emit('louer', this.terrain.id);
+      this.$emit('rent', this.field.id);
     },
-    handleAnnulerReservation() {
-      if (confirm('Êtes-vous sûr de vouloir annuler la réservation ?')) {
+    handleCancelReservation() {
+      if (confirm('Are you sure you want to cancel the reservation?')) {
         this.isReserved = false;
-        this.$emit('annuler-reservation', this.terrain.id);
+        this.$emit('cancel-reservation', this.field.id);
       }
     }
   }
@@ -72,7 +72,7 @@ export default {
 </script>
 
 <style scoped>
-.terrain-card {
+.field-card {
   border: none;
   border-radius: 12px;
   padding: 20px;
@@ -85,19 +85,19 @@ export default {
   animation: fadeIn 0.3s ease;
 }
 
-.terrain-card:hover {
+.field-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
 }
 
-.terrain-header {
+.field-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 12px;
 }
 
-.terrain-header h3 {
+.field-header h3 {
   margin: 0;
   font-size: 18px;
   flex: 1;
@@ -120,25 +120,25 @@ export default {
   font-weight: 600;
 }
 
-.terrain-info {
+.field-info {
   margin-bottom: 16px;
   flex: 1;
 }
 
-.terrain-info p {
+.field-info p {
   margin: 8px 0;
   font-size: 14px;
   color: #555;
 }
 
-.terrain-footer {
+.field-footer {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-.btn-details, .btn-modifier, .btn-supprimer, .btn-louer, .btn-annuler {
+.btn-details, .btn-edit, .btn-delete, .btn-rent, .btn-cancel {
   padding: 6px 12px;
   border: none;
   border-radius: 6px;
@@ -158,39 +158,39 @@ export default {
   box-shadow: 0 6px 12px rgba(47, 128, 237, 0.3);
 }
 
-.btn-louer {
+.btn-rent {
   background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
   color: white;
 }
 
-.btn-louer:hover {
+.btn-rent:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
 }
 
-.btn-annuler {
+.btn-cancel {
   background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
   color: white;
 }
 
-.btn-annuler:hover {
+.btn-cancel:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(255, 152, 0, 0.3);
 }
 
-.btn-modifier {
+.btn-edit {
   background-color: #4caf50;
   color: white;
   padding: 4px 8px;
   font-size: 14px;
 }
 
-.btn-modifier:hover {
+.btn-edit:hover {
   background-color: #45a049;
   transform: translateY(-2px);
 }
 
-.btn-supprimer {
+.btn-delete {
   background-color: #f44336;
   color: white;
   padding: 4px 8px;
@@ -198,7 +198,7 @@ export default {
   margin-left: 6px;
 }
 
-.btn-supprimer:hover {
+.btn-delete:hover {
   background-color: #da190b;
   transform: translateY(-2px);
 }
