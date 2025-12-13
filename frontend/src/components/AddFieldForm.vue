@@ -48,6 +48,16 @@
           <textarea v-model="form.description" id="description" maxlength="500" rows="4"></textarea>
           <span class="char-count">{{ form.description.length }}/500</span>
         </div>
+        <div class="form-group">
+          <label>
+            Image (optionnelle):
+            <input type="file" accept="image/*" @change="onFileChange" />
+          </label>
+          <input v-model="imageUrl" placeholder="ou URL d'image (optionnel)" />
+          <div v-if="preview" class="preview">
+            <img :src="preview" alt="preview" />
+          </div>
+        </div>
         <div class="form-actions">
           <button type="submit" class="submit-btn">Add</button>
           <button type="button" @click="close" class="cancel-btn">Cancel</button>
@@ -73,17 +83,43 @@ export default {
         prix: '',
         description: ''
       },
-      sports: ['Football', 'Basketball', 'Tennis', 'Volleyball']
+      sports: ['Football', 'Basketball', 'Tennis', 'Volleyball'],
+      imageUrl: '',
+      preview: null
     };
   },
   methods: {
+    onFileChange(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.preview = reader.result; // base64
+        this.imageUrl = ''; // clear URL when file chosen
+      };
+      reader.readAsDataURL(file);
+    },
     submit() {
       if (!this.form.type) {
         alert('Please select a sport type');
         return;
       }
-      this.$emit('submit', this.form);
+      const payload = {
+        name: this.form.name,
+        type: this.form.type,
+        location: this.form.location,
+        ville: this.form.ville,
+        size: this.form.size,
+        horaires: this.form.horaires,
+        date: this.form.date,
+        prix: this.form.prix,
+        description: this.form.description,
+        image: this.preview || (this.imageUrl ? this.imageUrl.trim() : null)
+      };
+      this.$emit('submit', payload);
       this.form = { name: '', location: '', ville: '', size: '', type: '', horaires: '', date: '', prix: '', description: '' };
+      this.preview = null;
+      this.imageUrl = '';
     },
     close() {
       this.$emit('close');
@@ -272,6 +308,14 @@ form {
 .cancel-btn:hover {
   background-color: #eeeeee;
   border-color: #ccc;
+}
+
+.preview img {
+  width: 120px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-top: 8px;
 }
 
 /* Scrollbar styling */

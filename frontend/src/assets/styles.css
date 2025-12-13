@@ -5,10 +5,42 @@
 }
 
 
+:root{
+    --bg-accent-1: #f3f8ff;
+    --bg-accent-2: #f7fbf3;
+    --accent-weak: rgba(47,128,237,0.06);
+}
+
+
 html, body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f5f5;
-    color: #333;
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(59, 130, 246, 0.06),
+            transparent 60%
+        ),
+        linear-gradient(
+            180deg,
+            #eef2f7 0%,
+            #f5f7fa 40%,
+            #f8fafc 100%
+        );
+    background-attachment: fixed;
+    color: #1f2937;
+}
+
+
+/* very light textured overlay to add depth (low opacity to remain subtle) */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0 2px, transparent 2px 6px);
+    opacity: 0.6;
+    mix-blend-mode: overlay;
+    z-index: -1;
 }
 
 
@@ -54,6 +86,16 @@ input:focus, select:focus, textarea:focus {
 h1, h2, h3, h4, h5, h6 {
     color: #222;
     margin-bottom: 10px;
+}
+
+
+/* small helper class to use translucent white + blur for panels */
+.panel-soft {
+    background: rgba(255,255,255,0.82);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.6);
 }
 
 

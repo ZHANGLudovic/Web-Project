@@ -1,6 +1,7 @@
 <template>
     <div class="container">
-        <div class="filters-section">
+        <!-- use translucent panel so the background shows through -->
+        <div class="filters-section panel-soft">
             <SportFilters :selected="selectedSports" @update:selected="selectedSports = $event" />
             <SearchBar @search="handleSearch" />
         </div>
@@ -43,9 +44,9 @@ export default {
         fieldDetails: null,
         searchQuery: '',
         defaultFields: [
-            { id: 1, nom: 'Central Field', sport: 'Football', adresse: '123 Rue de Paris', ville: 'Paris', taille: 5000, horaires: '09:00 - 18:00', date: '2024-12-31', prix: 25, description: 'Professional football field with night lighting. Excellent grass condition.' },
-            { id: 2, nom: 'Hall 32', sport: 'Basketball', adresse: '456 Avenue Lyon', ville: 'Lyon', taille: 2500, horaires: '08:00 - 20:00', date: '2024-12-31', prix: 30, description: 'Air-conditioned hall with modern equipment for basketball.' },
-            { id: 3, nom: 'Blue Court', sport: 'Tennis', adresse: '789 Route Tennis', ville: 'Marseille', taille: 800, horaires: '07:00 - 19:00', date: '2024-12-31', prix: 20, description: 'Tennis court with hard blue surface.' },
+            { id: 1, nom: 'Central Field', sport: 'Football', adresse: '123 Rue de Paris', ville: 'Paris', taille: 5000, horaires: '09:00 - 18:00', date: '2024-12-31', prix: 25, description: 'Professional football field with night lighting. Excellent grass condition.', image: new URL('../Image/Foot.webp', import.meta.url).href },
+            { id: 2, nom: 'Hall 32', sport: 'Basketball', adresse: '456 Avenue Lyon', ville: 'Lyon', taille: 2500, horaires: '08:00 - 20:00', date: '2024-12-31', prix: 30, description: 'Air-conditioned hall with modern equipment for basketball.', image: new URL('../Image/Baskette.jpg', import.meta.url).href },
+            { id: 3, nom: 'Blue Court', sport: 'Tennis', adresse: '789 Route Tennis', ville: 'Marseille', taille: 800, horaires: '07:00 - 19:00', date: '2024-12-31', prix: 20, description: 'Tennis court with hard blue surface.', image: new URL('../Image/Tennis.jpg', import.meta.url).href },
         ],
         };
     },
@@ -124,13 +125,14 @@ export default {
     animation: fadeIn 0.5s ease;
 }
 
+/* slightly adjust filters-section visuals to work with panel-soft */
 .filters-section {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     gap: 20px;
     margin-bottom: 30px;
-    background: white;
+    /* background/padding now comes from .panel-soft */
     padding: 25px;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);

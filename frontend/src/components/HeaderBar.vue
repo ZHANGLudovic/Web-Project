@@ -22,9 +22,11 @@ export default {
 <style scoped>
 .header {
     width: 100%;
-    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    background: linear-gradient(135deg, rgba(44,62,80,0.85) 0%, rgba(52,73,94,0.85) 100%);
     color: white;
     padding: 16px 20px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -33,6 +35,7 @@ export default {
     top: 0;
     z-index: 100;
     transition: box-shadow 0.3s ease;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
 .header:hover {

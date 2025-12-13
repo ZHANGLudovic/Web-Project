@@ -48,6 +48,16 @@
           <textarea v-model="form.description" id="description" maxlength="500" rows="4"></textarea>
           <span class="char-count">{{ form.description.length }}/500</span>
         </div>
+        <div class="form-group">
+          <label>
+            Image (optionnelle):
+            <input type="file" accept="image/*" @change="onFileChange" />
+          </label>
+          <input v-model="imageUrl" placeholder="ou URL d'image (optionnel)" />
+          <div v-if="preview" class="preview">
+            <img :src="preview" alt="preview" />
+          </div>
+        </div>
         <div class="form-actions">
           <button type="submit" class="submit-btn">Save</button>
           <button type="button" @click="close" class="cancel-btn">Cancel</button>
@@ -79,7 +89,9 @@ export default {
         prix: '',
         description: ''
       },
-      sports: ['Football', 'Basketball', 'Tennis', 'Volleyball']
+      sports: ['Football', 'Basketball', 'Tennis', 'Volleyball'],
+      imageUrl: '',
+      preview: this.field.image || null
     };
   },
   watch: {
@@ -98,17 +110,28 @@ export default {
             prix: newField.prix || '',
             description: newField.description || ''
           };
+          this.preview = newField.image || null;
         }
       }
     }
   },
   methods: {
+    onFileChange(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.preview = reader.result;
+        this.imageUrl = '';
+      };
+      reader.readAsDataURL(file);
+    },
     submit() {
-      if (!this.form.type) {
-        alert('Please select a sport type');
-        return;
-      }
-      this.$emit('submit', this.form);
+      const payload = {
+        ...this.form,
+        image: this.preview || (this.imageUrl ? this.imageUrl.trim() : null)
+      };
+      this.$emit('submit', payload);
     },
     close() {
       this.$emit('close');
@@ -271,5 +294,13 @@ export default {
 
 .cancel-btn:hover {
   background-color: #da190b;
+}
+
+.preview img {
+  width: 120px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-top: 8px;
 }
 </style>

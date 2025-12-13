@@ -47,11 +47,11 @@ methods: {
       horaires: fieldData.horaires,
       date: fieldData.date,
       prix: fieldData.prix,
-      description: fieldData.description
+      description: fieldData.description,
+      image: fieldData.image || null
     };
     this.fields.push(newField);
     this.fieldRefresh++;
-    console.log('New field:', newField);
     this.showForm = false;
   },
   submitEditField(fieldData) {
@@ -67,7 +67,8 @@ methods: {
         horaires: fieldData.horaires,
         date: fieldData.date,
         prix: fieldData.prix,
-        description: fieldData.description
+        description: fieldData.description,
+        image: fieldData.image ?? this.fields[index].image
       };
     }
     this.$emit('update-fields', this.fields);
