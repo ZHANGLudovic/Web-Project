@@ -19,7 +19,8 @@ export default {
                 { label: 'Football', value: 'Football' },
                 { label: 'Basketball', value: 'Basketball' },
                 { label: 'Tennis', value: 'Tennis' },
-                { label: 'Volleyball', value: 'Volleyball' }
+                { label: 'Volleyball', value: 'Volleyball' },
+                { label: 'Badminton', value: 'Badminton' }
             ],
         };       
     },

@@ -20,6 +20,7 @@
             />
         </div>
         <FieldDetails v-if="showDetails" :field="fieldDetails" @close="showDetails = false" />
+        <RentalDashboard v-if="showRental" :field="rentalField" @close="showRental = false" @booking-confirmed="handleBookingConfirmed" />
     </div>
 </template>
 
@@ -29,10 +30,12 @@ import SearchBar from '../components/SearchBar.vue';
 import SportFilters from '../components/SportFilters.vue';
 import FieldCard from '../components/FieldCard.vue';
 import FieldDetails from '../components/FieldDetails.vue';
+import RentalDashboard from '../components/RentalDashboard.vue';
+import api from '../api.js';
 
 export default {
     name: 'HomePage',
-    components: { SearchBar, SportFilters, FieldCard, FieldDetails },
+    components: { SearchBar, SportFilters, FieldCard, FieldDetails, RentalDashboard },
 
 
     props: ['fields'],
@@ -44,14 +47,15 @@ export default {
         showDetails: false,
         fieldDetails: null,
         searchQuery: '',
-        defaultFields: [
-            { id: 1, nom: 'Central Field', sport: 'Football', adresse: '123 Rue de Paris', ville: 'Paris', taille: 5000, horaires: '09:00 - 18:00', date: '2024-12-31', prix: 25, description: 'Professional football field with night lighting. Excellent grass condition.', image: new URL('../Image/Foot.webp', import.meta.url).href },
-            { id: 2, nom: 'Hall 32', sport: 'Basketball', adresse: '456 Avenue Lyon', ville: 'Lyon', taille: 2500, horaires: '08:00 - 20:00', date: '2024-12-31', prix: 30, description: 'Air-conditioned hall with modern equipment for basketball.', image: new URL('../Image/Baskette.jpg', import.meta.url).href },
-            { id: 3, nom: 'Blue Court', sport: 'Tennis', adresse: '789 Route Tennis', ville: 'Marseille', taille: 800, horaires: '07:00 - 19:00', date: '2024-12-31', prix: 20, description: 'Tennis court with hard blue surface.', image: new URL('../Image/Tennis.jpg', import.meta.url).href },
-        ],
+        fetchedFields: [],
+        showRental: false,
+        rentalField: null
         };
     },
 
+    mounted() {
+        this.fetchFields();
+    },
 
     computed: {
     isAdmin() {
@@ -67,7 +71,7 @@ export default {
         return false;
     },
     allFields() {
-        return [...this.defaultFields, ...this.fields];
+        return [...this.fetchedFields, ...this.fields];
     },
     filteredFields() {
         let result = this.allFields;
@@ -91,6 +95,34 @@ export default {
     },
     
     methods: {
+        async fetchFields() {
+            try {
+                const response = await api.fields.getAll();
+                // Map database fields to component format
+                this.fetchedFields = (response.data || []).map(field => ({
+                    id: field.id,
+                    nom: field.nom,
+                    sport: field.sport,
+                    adresse: field.adresse,
+                    ville: field.ville,
+                    taille: field.taille,
+                    horaires: field.horaires,
+                    date: field.date,
+                    prix: field.prix,
+                    description: field.description,
+                    image: field.image_url || this.getDefaultImage(field.sport)
+                }));
+            } catch (error) {
+                console.error('Error fetching fields:', error);
+            }
+        },
+        getDefaultImage(sport) {
+            const sportLower = (sport || '').toLowerCase();
+            if (sportLower.includes('football')) return new URL('../Image/Foot.webp', import.meta.url).href;
+            if (sportLower.includes('basket')) return new URL('../Image/Baskette.jpg', import.meta.url).href;
+            if (sportLower.includes('tennis')) return new URL('../Image/Tennis.jpg', import.meta.url).href;
+            return new URL('../Image/Foot.webp', import.meta.url).href;
+        },
         handleSearch(query) {
             this.searchQuery = query;
         },
@@ -108,15 +140,19 @@ export default {
             }
         },
         handleDelete(id) {
-            this.defaultFields = this.defaultFields.filter(f => f.id !== id);
+            this.fetchedFields = this.fetchedFields.filter(f => f.id !== id);
             this.$emit('update-fields', this.fields.filter(f => f.id !== id));
         },
         handleRent(id) {
             const field = this.allFields.find(f => f.id === id);
             if (field) {
-                console.log(`Field "${field.nom}" rented successfully!`);
-                alert(`You have successfully rented "${field.nom}"!`);
+                this.rentalField = field;
+                this.showRental = true;
             }
+        },
+        handleBookingConfirmed() {
+            this.showRental = false;
+            this.fetchFields();
         },
         handleCancelReservation(id) {
             const field = this.allFields.find(f => f.id === id);
