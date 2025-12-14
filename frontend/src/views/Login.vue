@@ -9,6 +9,9 @@
 
 
 <script>
+import api from '../api.js';
+import { eventBus } from '../eventBus.js';
+
 export default {
     name: 'LoginPage',
     data() {
@@ -18,22 +21,26 @@ export default {
         };
     },
     methods: {
-        login() {
-            fetch("http://localhost:3000/auth/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email: this.email, password: this.password })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.error) {
-                    alert("Error: " + data.error);
-                } else {
-                    alert("Login successful!");
-                    this.$router.push('/');
-                }
-            })
-            .catch(err => alert("Error: " + err.message));
+        async login() {
+            if (!this.email || !this.password) {
+                alert("Please fill in all fields");
+                return;
+            }
+
+            try {
+                const data = await api.auth.login(this.email, this.password);
+                
+                // Store user info in localStorage first
+                localStorage.setItem('user', JSON.stringify(data.user));
+                // Notify App.vue of login
+                eventBus.emit('user-logged-in', data.user);
+                alert("Login successful!");
+                // Add a small delay to ensure event is processed before navigation
+                await new Promise(resolve => setTimeout(resolve, 100));
+                this.$router.push('/');
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
         }
     }
 };

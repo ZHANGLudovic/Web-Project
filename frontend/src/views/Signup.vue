@@ -2,6 +2,7 @@
     <div class="form-container">
         <h2>Sign Up</h2>
         <input type="email" placeholder="Email" v-model="email" />
+        <input type="text" placeholder="Username" v-model="username" />
         <input type="password" placeholder="Password" v-model="password" />
 
 
@@ -17,32 +18,32 @@
 
 
 <script>
+import api from '../api.js';
+
 export default {
     name: 'SignupPage',
     data() {
         return {
         email: '',
+        username: '',
         password: '',
         role: 'user'
         };
     },
     methods: {
-        signup() {
-            fetch("http://localhost:3000/auth/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email: this.email, password: this.password })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.error) {
-                    alert("Error: " + data.error);
-                } else {
-                    alert("Sign up successful!");
-                    this.$router.push('/login');
-                }
-            })
-            .catch(err => alert("Error: " + err.message));
+        async signup() {
+            if (!this.email || !this.username || !this.password) {
+                alert("Please fill in all fields");
+                return;
+            }
+
+            try {
+                await api.auth.register(this.email, this.username, this.password);
+                alert("Sign up successful!");
+                this.$router.push('/login');
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
         }
     }
 };

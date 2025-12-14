@@ -2,7 +2,7 @@
   <div id="app">
   <HeaderBar />
   <div class="button-container">
-    <AddFieldButton @add-field="handleAddField" />
+    <AddFieldButton v-if="isAdmin" @add-field="handleAddField" />
   </div>
   <AddFieldForm v-if="showForm" @close="showForm = false" @submit="submitField" />
   <EditFieldForm v-if="showEditForm" :field="fieldToEdit" @close="showEditForm = false" @submit="submitEditField" />
@@ -16,6 +16,7 @@ import HeaderBar from './components/HeaderBar.vue';
 import AddFieldButton from './components/AddFieldButton.vue';
 import AddFieldForm from './components/AddFieldForm.vue';
 import EditFieldForm from './components/EditFieldForm.vue';
+import { eventBus } from './eventBus.js';
 
 export default {
 components: { HeaderBar, AddFieldButton, AddFieldForm, EditFieldForm },
@@ -25,8 +26,36 @@ data() {
     showEditForm: false,
     fields: [],
     fieldToEdit: null,
-    fieldRefresh: 0
+    fieldRefresh: 0,
+    user: null
   };
+},
+computed: {
+  isAdmin() {
+    return this.user && this.user.role === 'admin';
+  }
+},
+mounted() {
+  // Check if user is stored in localStorage
+  const storedUser = localStorage.getItem('user');
+  if (storedUser) {
+    try {
+      this.user = JSON.parse(storedUser);
+    } catch (e) {
+      console.error('Error parsing stored user:', e);
+      this.user = null;
+    }
+  }
+
+  // Listen for login event
+  eventBus.on('user-logged-in', (user) => {
+    this.user = user;
+  });
+
+  // Listen for logout event
+  eventBus.on('user-logged-out', () => {
+    this.user = null;
+  });
 },
 methods: {
   handleAddField() {
