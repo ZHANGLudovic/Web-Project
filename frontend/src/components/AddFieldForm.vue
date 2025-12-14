@@ -50,10 +50,10 @@
         </div>
         <div class="form-group">
           <label>
-            Image (optionnelle):
+            Image (optional):
             <input type="file" accept="image/*" @change="onFileChange" />
           </label>
-          <input v-model="imageUrl" placeholder="ou URL d'image (optionnel)" />
+          <input v-model="imageUrl" placeholder="or Image URL (optional)" />
           <div v-if="preview" class="preview">
             <img :src="preview" alt="preview" />
           </div>

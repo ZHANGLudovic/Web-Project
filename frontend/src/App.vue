@@ -7,6 +7,7 @@
   <AddFieldForm v-if="showForm" @close="showForm = false" @submit="submitField" />
   <EditFieldForm v-if="showEditForm" :field="fieldToEdit" @close="showEditForm = false" @submit="submitEditField" />
   <router-view :key="fieldRefresh" :fields="fields" @update-fields="updateFields" @edit-field="handleEditField" />
+  <AppFooter />
   </div>
 </template>
 
@@ -16,10 +17,11 @@ import HeaderBar from './components/HeaderBar.vue';
 import AddFieldButton from './components/AddFieldButton.vue';
 import AddFieldForm from './components/AddFieldForm.vue';
 import EditFieldForm from './components/EditFieldForm.vue';
+import AppFooter from './components/Footer.vue';
 import { eventBus } from './eventBus.js';
 
 export default {
-components: { HeaderBar, AddFieldButton, AddFieldForm, EditFieldForm },
+components: { HeaderBar, AddFieldButton, AddFieldForm, EditFieldForm, AppFooter },
 data() {
   return {
     showForm: false,

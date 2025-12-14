@@ -50,10 +50,10 @@
         </div>
         <div class="form-group">
           <label>
-            Image (optionnelle):
+            Image (optional):
             <input type="file" accept="image/*" @change="onFileChange" />
           </label>
-          <input v-model="imageUrl" placeholder="ou URL d'image (optionnel)" />
+          <input v-model="imageUrl" placeholder="or Image URL (optional)" />
           <div v-if="preview" class="preview">
             <img :src="preview" alt="preview" />
           </div>
@@ -147,160 +147,265 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: fadeIn 0.3s ease;
 }
 
 .modal-content {
-  background-color: white;
-  border-radius: 8px;
-  padding: 30px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 16px;
+  padding: 0;
+  width: 100%;
+  max-width: 650px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.4s ease;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  padding: 30px 35px;
+  background: linear-gradient(135deg, #2f80ed 0%, #1e5cb8 100%);
+  color: white;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 4px 12px rgba(47, 128, 237, 0.3);
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .close-btn {
-  background: none;
+  background: rgba(255, 255, 255, 0.2);
   border: none;
-  font-size: 28px;
+  font-size: 32px;
   cursor: pointer;
-  color: #666;
+  color: white;
+  padding: 8px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+form {
+  padding: 35px;
+  max-height: 70vh;
+  overflow-y: auto;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 24px;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #495057;
   font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
+.form-group input,
 .form-group select {
   width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
+  padding: 12px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 16px;
   background-color: white;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #2f80ed;
+  box-shadow: 0 0 0 4px rgba(47, 128, 237, 0.1);
+  transform: translateY(-2px);
 }
 
 .form-group textarea {
   width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  font-family: Arial, sans-serif;
+  padding: 12px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   resize: vertical;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  min-height: 100px;
+}
+
+.form-group textarea:focus {
+  outline: none;
+  border-color: #2f80ed;
+  box-shadow: 0 0 0 4px rgba(47, 128, 237, 0.1);
+  transform: translateY(-2px);
 }
 
 .char-count {
   display: block;
   font-size: 12px;
-  color: #999;
-  margin-top: 4px;
-}
-
-.checkbox-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  color: #6c757d;
   margin-top: 8px;
+  text-align: right;
+  font-weight: 500;
 }
 
-.checkbox-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
+.preview img {
+  width: 140px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-top: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
 }
 
-.checkbox-item input[type="checkbox"] {
-  cursor: pointer;
-}
-
-.checkbox-item input[type="radio"] {
-  cursor: pointer;
-}
-
-.radio-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-top: 8px;
-}
-
-.radio-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.radio-item input[type="radio"] {
-  cursor: pointer;
+.preview img:hover {
+  transform: scale(1.05);
 }
 
 .form-actions {
   display: flex;
-  gap: 10px;
-  margin-top: 20px;
+  gap: 16px;
+  margin-top: 35px;
+  padding-top: 25px;
+  border-top: 2px solid #e9ecef;
 }
 
 .submit-btn, .cancel-btn {
   flex: 1;
-  padding: 10px;
+  padding: 14px 24px;
   border: none;
-  border-radius: 4px;
+  border-radius: 10px;
   font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .submit-btn {
-  background-color: #4CAF50;
+  background: linear-gradient(135deg, #28a745, #218838);
   color: white;
 }
 
 .submit-btn:hover {
-  background-color: #45a049;
+  background: linear-gradient(135deg, #218838, #1e7e34);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(40, 167, 69, 0.3);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
 }
 
 .cancel-btn {
-  background-color: #f44336;
+  background: linear-gradient(135deg, #6c757d, #5a6268);
   color: white;
 }
 
 .cancel-btn:hover {
-  background-color: #da190b;
+  background: linear-gradient(135deg, #5a6268, #495057);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(108, 117, 125, 0.3);
 }
 
-.preview img {
-  width: 120px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 6px;
-  margin-top: 8px;
+.cancel-btn:active {
+  transform: translateY(0);
+}
+
+/* Scrollbar styling */
+form::-webkit-scrollbar {
+  width: 8px;
+}
+
+form::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+form::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+form::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    max-width: 95%;
+    margin: 20px;
+  }
+
+  .modal-header {
+    padding: 25px 20px;
+  }
+
+  .modal-header h2 {
+    font-size: 20px;
+  }
+
+  form {
+    padding: 25px 20px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .submit-btn, .cancel-btn {
+    width: 100%;
+  }
 }
 </style>
