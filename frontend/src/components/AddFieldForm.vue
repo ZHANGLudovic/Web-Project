@@ -41,7 +41,7 @@
         </div>
         <div class="form-group">
           <label for="prix">Price (€/hour):</label>
-          <input v-model="form.prix" type="number" id="prix" step="0.01">
+          <input v-model="form.prix" type="number" id="prix" step="0.01"> 
         </div>
         <div class="form-group">
           <label for="description">Description (max 500 characters):</label>
