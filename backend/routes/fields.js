@@ -8,7 +8,7 @@ router.get('/', (req, res) => {
   const { sport, ville, page = 1, limit = 12, search } = req.query;
   const offset = (page - 1) * limit;
   
-  let query = 'SELECT * FROM fields';
+  let query = 'SELECT * FROM fields WHERE 1=1';
   let params = [];
   
   if (sport) {
@@ -36,7 +36,7 @@ router.get('/', (req, res) => {
     }
     
     // Get total count for pagination
-    let countQuery = 'SELECT COUNT(*) as count FROM fields';
+    let countQuery = 'SELECT COUNT(*) as count FROM fields WHERE 1=1';
     let countParams = [];
     
     if (sport) {

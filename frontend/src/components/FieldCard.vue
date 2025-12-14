@@ -9,8 +9,8 @@
       <p class="desc">{{ field.description }}</p>
       <div class="actions">
         <button @click="$emit('details', field.id)">Details</button>
-        <button @click="$emit('edit', field.id)">Edit</button>
-        <button @click="$emit('delete', field.id)">Delete</button>
+        <button v-if="isAdmin" @click="$emit('edit', field.id)">Edit</button>
+        <button v-if="isAdmin" @click="$emit('delete', field.id)">Delete</button>
         <button @click="$emit('rent', field.id)">Rent</button>
       </div>
     </div>
@@ -21,7 +21,8 @@
 export default {
   name: 'FieldCard',
   props: {
-    field: { type: Object, required: true }
+    field: { type: Object, required: true },
+    isAdmin: { type: Boolean, default: false }
   },
   computed: {
     displayImage() {

@@ -94,6 +94,15 @@ db.serialize(() => {
 
   db.run(`CREATE INDEX IF NOT EXISTS idx_reviews_field ON reviews(field_id)`);
   db.run(`CREATE INDEX IF NOT EXISTS idx_reviews_user ON reviews(user_id)`);
+
+  // SEED DATA - Insert original fields if they don't exist
+  db.run(`
+    INSERT OR IGNORE INTO fields (id, nom, sport, adresse, ville, taille, horaires, date, prix, description, image_url, capacity)
+    VALUES 
+      (1, 'Central Field', 'Football', '123 Rue de Paris', 'Paris', 5000, '09:00 - 18:00', '2024-12-31', 25, 'Professional football field with night lighting. Excellent grass condition.', '/images/foot.webp', 20),
+      (2, 'Hall 32', 'Basketball', '456 Avenue Lyon', 'Lyon', 2500, '08:00 - 20:00', '2024-12-31', 30, 'Air-conditioned hall with modern equipment for basketball.', '/images/basketball.jpg', 20),
+      (3, 'Blue Court', 'Tennis', '789 Route Tennis', 'Marseille', 800, '07:00 - 19:00', '2024-12-31', 20, 'Tennis court with hard blue surface.', '/images/tennis.jpg', 20)
+  `);
 });
 
 module.exports = db;

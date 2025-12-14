@@ -11,6 +11,7 @@
             v-for="f in filteredFields"
             :key="f.id"
             :field="f"
+            :is-admin="isAdmin"
             @details="handleDetails"
             @edit="handleEdit"
             @delete="handleDelete"
@@ -53,6 +54,18 @@ export default {
 
 
     computed: {
+    isAdmin() {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            try {
+                const user = JSON.parse(storedUser);
+                return user && user.role === 'admin';
+            } catch (e) {
+                return false;
+            }
+        }
+        return false;
+    },
     allFields() {
         return [...this.defaultFields, ...this.fields];
     },

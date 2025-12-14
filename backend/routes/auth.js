@@ -5,7 +5,7 @@ const { validateEmail, validatePassword, validateUsername } = require("../middle
 
 // REGISTER
 router.post("/register", (req, res) => {
-  const { email, password, username } = req.body;
+  const { email, password, username, role = 'user' } = req.body;
 
   // Validation
   if (!email || !password || !username) {
@@ -25,8 +25,8 @@ router.post("/register", (req, res) => {
   }
 
   db.run(
-    "INSERT INTO users (email, password, username) VALUES (?, ?, ?)",
-    [email, password, username],
+    "INSERT INTO users (email, password, username, role) VALUES (?, ?, ?, ?)",
+    [email, password, username, role],
     function (err) {
       if (err) {
         if (err.message.includes("UNIQUE")) {
@@ -37,7 +37,8 @@ router.post("/register", (req, res) => {
       res.json({ 
         message: "User registered successfully", 
         id: this.lastID,
-        username: username 
+        username: username,
+        role: role
       });
     }
   );

@@ -38,7 +38,7 @@ export default {
             }
 
             try {
-                await api.auth.register(this.email, this.username, this.password);
+                await api.auth.register(this.email, this.username, this.password, this.role);
                 alert("Sign up successful!");
                 this.$router.push('/login');
             } catch (error) {

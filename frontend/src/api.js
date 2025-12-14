@@ -26,10 +26,10 @@ const apiCall = async (endpoint, options = {}) => {
 const api = {
   // Auth endpoints
   auth: {
-    register: (email, username, password) =>
+    register: (email, username, password, role = 'user') =>
       apiCall('/auth/register', {
         method: 'POST',
-        body: JSON.stringify({ email, username, password })
+        body: JSON.stringify({ email, username, password, role })
       }),
     login: (email, password) =>
       apiCall('/auth/login', {
