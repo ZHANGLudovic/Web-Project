@@ -6,6 +6,7 @@ import Profile from '../views/Profile.vue';
 import Contact from '../views/Contact.vue';
 import About from '../views/About.vue';
 import Sitemap from '../views/Sitemap.vue';
+import MyReservations from '../views/MyReservations.vue';
 
 
 const routes = [
@@ -16,6 +17,12 @@ const routes = [
 { path: '/contact', name: 'Contact', component: Contact },
 { path: '/about', name: 'About', component: About },
 { path: '/sitemap', name: 'Sitemap', component: Sitemap },
+{
+    path: '/reservations',
+    name: 'MyReservations',
+    component: MyReservations,
+    meta: { requiresAuth: true }
+  }
 ];
 
 

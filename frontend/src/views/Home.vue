@@ -98,8 +98,7 @@ export default {
         async fetchFields() {
             try {
                 const response = await api.fields.getAll();
-                // Map database fields to component format
-                this.fetchedFields = (response.data || []).map(field => ({
+                this.fetchedFields = (response.data || response || []).map(field => ({
                     id: field.id,
                     nom: field.nom,
                     sport: field.sport,
@@ -110,7 +109,7 @@ export default {
                     date: field.date,
                     prix: field.prix,
                     description: field.description,
-                    image: field.image_url || this.getDefaultImage(field.sport)
+                    image_url: field.image_url
                 }));
             } catch (error) {
                 console.error('Error fetching fields:', error);

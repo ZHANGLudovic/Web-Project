@@ -1,6 +1,15 @@
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database("./database.db");
 
+// Enable foreign keys - TRÈS IMPORTANT pour SQLite
+db.run("PRAGMA foreign_keys = ON", (err) => {
+  if (err) {
+    console.error("Error enabling foreign keys:", err);
+  } else {
+    console.log("Foreign keys enabled");
+  }
+});
+
 // CREATE TABLES
 db.serialize(() => {
   db.run(`
@@ -95,24 +104,67 @@ db.serialize(() => {
   db.run(`CREATE INDEX IF NOT EXISTS idx_reviews_field ON reviews(field_id)`);
   db.run(`CREATE INDEX IF NOT EXISTS idx_reviews_user ON reviews(user_id)`);
 
-  // SEED DATA - Insert original fields if they don't exist
+  // Table pour gérer les créneaux horaires réservés
+  db.run(`
+    CREATE TABLE IF NOT EXISTS time_slots (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      reservation_id INTEGER NOT NULL,
+      field_id INTEGER NOT NULL,
+      reservation_date TEXT NOT NULL,
+      time_slot TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (reservation_id) REFERENCES reservations(id) ON DELETE CASCADE,
+      FOREIGN KEY (field_id) REFERENCES fields(id) ON DELETE CASCADE,
+      UNIQUE(field_id, reservation_date, time_slot)
+    )
+  `, (err) => {
+    if (err) {
+      console.error("Error creating time_slots table:", err);
+    } else {
+      console.log("time_slots table ready");
+    }
+  });
+
+  db.run(`CREATE INDEX IF NOT EXISTS idx_time_slots_field_date ON time_slots(field_id, reservation_date)`);
+
+  // SEED DATA - Insert original fields with specific images
   db.run(`
     INSERT OR IGNORE INTO fields (id, nom, sport, adresse, ville, taille, horaires, date, prix, description, image_url, capacity)
     VALUES 
-      (1, 'Central Field', 'Football', '123 Rue de Paris', 'Paris', 5000, '09:00 - 18:00', '2024-12-31', 25, 'Professional football field with night lighting. Excellent grass condition.', '/Image/Foot.webp', 20),
-      (2, 'Hall 32', 'Basketball', '456 Avenue Lyon', 'Lyon', 2500, '08:00 - 20:00', '2024-12-31', 30, 'Air-conditioned hall with modern equipment for basketball.', '/images/basketball.jpg', 20),
-      (3, 'Blue Court', 'Tennis', '789 Route Tennis', 'Marseille', 800, '07:00 - 19:00', '2024-12-31', 20, 'Tennis court with hard blue surface.', '/images/tennis.jpg', 20),
-      (4, 'Green Arena', 'Badminton', '321 Boulevard Badminton', 'Nice', 600, '10:00 - 22:00', '2024-12-31', 15, 'Indoor badminton court with synthetic flooring.', '/images/badminton.jpg', 20),
-      (5, 'Spike Zone', 'Volleyball', '654 Street Volleyball', 'Toulouse', 1200, '06:00 - 21:00', '2024-12-31', 18, 'Volleyball court with sand surface for beach volleyball.', '/images/volleyball.jpg', 20),
-      (6, 'Downtown Field', 'Football', '987 Central Ave', 'Bordeaux', 4000, '09:00 - 17:00', '2024-12-31', 22, 'Spacious football field located in the city center.', '/images/foot2.jpg', 20) ,
-      (7, 'Sunset Tennis', 'Tennis', '159 Sunset Blvd', 'Nantes', 900, '08:00 - 20:00', '2024-12-31', 21, 'Tennis court with beautiful sunset views.', '/images/tennis2.jpg', 20) ,
-      (8, 'City Hoops', 'Basketball', '753 City St', 'Strasbourg', 2700, '07:00 - 22:00', '2024-12-31', 28, 'Modern basketball court in the heart of the city.', '/images/basketball2.jpg', 20),
-      (9, 'Rapid Badminton', 'Badminton', '852 Rapid Rd', 'Montpellier', 650, '10:00 - 21:00', '2024-12-31', 16, 'Fast-paced badminton court with great lighting.', '/images/badminton2.jpg', 20),
-      (10, 'Beach Volleyball Court', 'Volleyball', '147 Beach Ave', 'Cannes', 1300, '06:00 - 20:00', '2024-12-31', 19, 'Outdoor beach volleyball court with sand surface.', '/images/volleyball2.jpg', 20),
-      (11, 'Elite Football Pitch', 'Football', '369 Elite St', 'Lille', 4500, '09:00 - 18:00', '2024-12-31', 27, 'High-quality football pitch with excellent facilities.', '/images/foot3.jpg', 20),
-      (12, 'Grand Slam Tennis', 'Tennis', '258 Grand Ave', 'Rennes', 850, '08:00 - 19:00', '2024-12-31', 23, 'Tennis court designed for grand slam level play.', '/images/tennis3.jpg', 20),
-      (13, 'Pro Basketball Court', 'Basketball', '147 Pro St', 'Grenoble', 3000, '07:00 - 21:00', '2024-12-31', 32, 'Professional-grade basketball court with top amenities.', '/images/basketball3.jpg', 20)
+      (1, 'Central Field', 'Football', '123 Rue de Paris', 'Paris', 5000, '08:00 - 22:00', '2024-12-31', 25, 'Professional football field with night lighting. Excellent grass condition.', '/Image/Foot.webp', 20),
+      (2, 'Hall 32', 'Basketball', '456 Avenue Lyon', 'Lyon', 2500, '08:00 - 22:00', '2024-12-31', 30, 'Air-conditioned hall with modern equipment for basketball.', '/Image/Baskette.jpg', 20),
+      (3, 'Blue Court', 'Tennis', '789 Route Tennis', 'Marseille', 800, '08:00 - 22:00', '2024-12-31', 20, 'Tennis court with hard blue surface.', '/Image/Tennis.jpg', 20),
+      (4, 'Green Arena', 'Badminton', '321 Boulevard Badminton', 'Nice', 600, '08:00 - 22:00', '2024-12-31', 15, 'Indoor badminton court with synthetic flooring.', '/Image/Badminton.jpg', 20),
+      (5, 'Spike Zone', 'Volleyball', '654 Street Volleyball', 'Toulouse', 1200, '08:00 - 22:00', '2024-12-31', 18, 'Volleyball court with sand surface for beach volleyball.', '/Image/Volley.webp', 20),
+      (6, 'Downtown Field', 'Football', '987 Central Ave', 'Bordeaux', 4000, '08:00 - 22:00', '2024-12-31', 22, 'Spacious football field located in the city center.', '/Image/Football2.jpg', 20),
+      (7, 'Sunset Tennis', 'Tennis', '159 Sunset Blvd', 'Nantes', 900, '08:00 - 22:00', '2024-12-31', 21, 'Tennis court with beautiful sunset views.', '/Image/Tennis2.jpg', 20),
+      (8, 'City Hoops', 'Basketball', '753 City St', 'Strasbourg', 2700, '08:00 - 22:00', '2024-12-31', 28, 'Modern basketball court in the heart of the city.', '/Image/Basket2.jpg', 20),
+      (9, 'Rapid Badminton', 'Badminton', '852 Rapid Rd', 'Montpellier', 650, '08:00 - 22:00', '2024-12-31', 16, 'Fast-paced badminton court with great lighting.', '/Image/Badminton2.jpg', 20),
+      (10, 'Beach Volleyball Court', 'Volleyball', '147 Beach Ave', 'Cannes', 1300, '08:00 - 22:00', '2024-12-31', 19, 'Outdoor beach volleyball court with sand surface.', '/Image/Volley2.jpg', 20),
+      (11, 'Elite Football Pitch', 'Football', '369 Elite St', 'Lille', 4500, '08:00 - 22:00', '2024-12-31', 27, 'High-quality football pitch with excellent facilities.', '/Image/Football3.jpg', 20),
+      (12, 'Grand Slam Tennis', 'Tennis', '258 Grand Ave', 'Rennes', 850, '08:00 - 22:00', '2024-12-31', 23, 'Tennis court designed for grand slam level play.', '/Image/Tennis3.jpg', 20),
+      (13, 'Pro Basketball Court', 'Basketball', '147 Pro St', 'Grenoble', 3000, '08:00 - 22:00', '2024-12-31', 32, 'Professional-grade basketball court with top amenities.', '/Image/Basket3.jpg', 20)
   `);
+  
+  // Créer un compte admin par défaut
+  try {
+    const bcrypt = require('bcrypt');
+    const adminPassword = bcrypt.hashSync('admin123', 10);
+    
+    db.run(`
+      INSERT OR IGNORE INTO users (id, email, username, password, role)
+      VALUES (1, 'admin@sportcity.com', 'admin', ?, 'admin')
+    `, [adminPassword], (err) => {
+      if (err) {
+        console.error('Error creating admin user:', err);
+      } else {
+        console.log('✅ Admin user ready: admin@sportcity.com / admin123');
+      }
+    });
+  } catch (error) {
+    console.error('⚠️ bcrypt not available, skipping admin user creation');
+    console.log('Install bcrypt: npm install bcrypt');
+  }
 });
 
 module.exports = db;

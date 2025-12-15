@@ -6,6 +6,7 @@ const fieldsRoutes = require("./routes/fields");
 const usersRoutes = require("./routes/users");
 const sportsRoutes = require("./routes/sports");
 const reviewsRoutes = require("./routes/reviews");
+const reservationsRoutes = require("./routes/reservations");
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use("/fields", fieldsRoutes);
 app.use("/users", usersRoutes);
 app.use("/sports", sportsRoutes);
 app.use("/reviews", reviewsRoutes);
+app.use("/reservations", reservationsRoutes);
 
 // Health check endpoint
 app.get("/health", (req, res) => {
@@ -48,7 +50,8 @@ app.get("/", (req, res) => {
       fields: "/fields",
       users: "/users",
       sports: "/sports",
-      reviews: "/reviews"
+      reviews: "/reviews",
+      reservations: "/reservations"
     }
   });
 });

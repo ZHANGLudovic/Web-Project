@@ -23,22 +23,27 @@
 
                 <div class="time-slots">
                     <h3>Available Times</h3>
-                    <div class="slots-grid">
+                    <div v-if="loadingSlots" class="loading-slots">
+                        <p>Loading available times...</p>
+                    </div>
+                    <div v-else class="slots-grid">
                         <button 
-                            v-for="slot in availableSlots" 
+                            v-for="slot in allTimeSlots" 
                             :key="slot"
                             @click="selectTimeSlot(slot)"
-                            :class="['time-slot', { selected: selectedTime === slot }]"
+                            :disabled="isSlotReserved(slot)"
+                            :class="getSlotClass(slot)"
                         >
                             {{ slot }}
+                            <span v-if="isSlotReserved(slot)" class="reserved-icon">🔒</span>
                         </button>
                     </div>
-                    <p v-if="availableSlots.length === 0" class="no-slots">
+                    <p v-if="!loadingSlots && availableSlots.length === 0" class="no-slots">
                         No available times for this date
                     </p>
                 </div>
 
-                <div v-if="selectedTime" class="booking-summary">
+                <div v-if="selectedTimeSlots.length > 0" class="booking-summary">
                     <h3>Booking Summary</h3>
                     <div class="summary-item">
                         <span>Field:</span>
@@ -49,16 +54,16 @@
                         <strong>{{ formatDate(selectedDate) }}</strong>
                     </div>
                     <div class="summary-item">
-                        <span>Time:</span>
-                        <strong>{{ selectedTime }}</strong>
+                        <span>Time Range:</span>
+                        <strong>{{ timeRange }}</strong>
                     </div>
                     <div class="summary-item">
                         <span>Duration:</span>
-                        <select v-model.number="duration" class="duration-select">
-                            <option v-for="d in [1, 2, 3, 4, 5]" :key="d" :value="d">
-                                {{ d }} hour{{ d > 1 ? 's' : '' }}
-                            </option>
-                        </select>
+                        <strong>{{ totalDuration }} hour{{ totalDuration > 1 ? 's' : '' }}</strong>
+                    </div>
+                    <div class="summary-item">
+                        <span>Selected Slots:</span>
+                        <strong>{{ selectedTimeSlots.length }} slot(s)</strong>
                     </div>
                     <div class="summary-item total">
                         <span>Total Price:</span>
@@ -70,7 +75,7 @@
                     <button @click="$emit('close')" class="btn-cancel">Cancel</button>
                     <button 
                         @click="confirmBooking" 
-                        :disabled="!selectedTime"
+                        :disabled="selectedTimeSlots.length === 0"
                         class="btn-confirm"
                     >
                         Confirm Booking
@@ -82,8 +87,6 @@
 </template>
 
 <script>
-import api from '../api.js';
-
 export default {
     name: 'RentalDashboard',
     props: {
@@ -92,58 +95,138 @@ export default {
     data() {
         return {
             selectedDate: new Date().toISOString().split('T')[0],
-            selectedTime: null,
-            duration: 1,
+            selectedTimeSlots: [],
             reservedSlots: [],
+            availableSlots: [],
+            allTimeSlots: [],
+            loadingSlots: false,
             today: new Date().toISOString().split('T')[0]
         };
     },
     computed: {
-        availableSlots() {
-            const slots = this.generateTimeSlots();
-            return slots.filter(slot => !this.reservedSlots.includes(slot));
-        },
         totalPrice() {
-            return this.field.prix * this.duration;
+            // Calculer en fonction de la durée totale, pas du nombre de créneaux
+            if (this.selectedTimeSlots.length === 0) return 0;
+            
+            const sorted = [...this.selectedTimeSlots].sort();
+            const startHour = parseInt(sorted[0].split(':')[0]);
+            const lastSlot = sorted[sorted.length - 1];
+            const endHour = parseInt(lastSlot.split(':')[0]) + 1;
+            const totalHours = endHour - startHour;
+            
+            return this.field.prix * totalHours;
+        },
+        timeRange() {
+            if (this.selectedTimeSlots.length === 0) return '';
+            const sorted = [...this.selectedTimeSlots].sort();
+            const start = sorted[0];
+            const lastSlot = sorted[sorted.length - 1];
+            const endHour = parseInt(lastSlot.split(':')[0]) + 1;
+            const end = `${endHour.toString().padStart(2, '0')}:00`;
+            return `${start} - ${end}`;
+        },
+        totalDuration() {
+            if (this.selectedTimeSlots.length === 0) return 0;
+            
+            const sorted = [...this.selectedTimeSlots].sort();
+            const startHour = parseInt(sorted[0].split(':')[0]);
+            const lastSlot = sorted[sorted.length - 1];
+            const endHour = parseInt(lastSlot.split(':')[0]) + 1;
+            
+            return endHour - startHour;
         }
     },
     mounted() {
-        this.fetchReservations();
+        this.fetchAvailableSlots();
+        // Rafraîchir les créneaux toutes les 10 secondes pour voir les changements en temps réel
+        this.refreshInterval = setInterval(() => {
+            this.fetchAvailableSlots();
+        }, 10000);
+    },
+    beforeUnmount() {
+        // Nettoyer l'intervalle quand le composant est détruit
+        if (this.refreshInterval) {
+            clearInterval(this.refreshInterval);
+        }
     },
     watch: {
         selectedDate() {
-            this.selectedTime = null;
-            this.fetchReservations();
+            this.selectedTimeSlots = [];
+            this.fetchAvailableSlots();
         }
     },
     methods: {
-        generateTimeSlots() {
+        getSlotClass(slot) {
+            const classes = ['time-slot'];
+            if (this.selectedTimeSlots.includes(slot)) {
+                classes.push('selected');
+            }
+            if (this.reservedSlots.includes(slot)) {
+                classes.push('reserved');
+            }
+            return classes;
+        },
+        async fetchAvailableSlots() {
+            this.loadingSlots = true;
+            
+            try {
+                const url = `http://localhost:3000/fields/${this.field.id}/available-slots?date=${this.selectedDate}`;
+                const response = await fetch(url);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Mise à jour simple et directe
+                    this.reservedSlots = Array.isArray(data.reserved_slots) ? data.reserved_slots : [];
+                    this.availableSlots = Array.isArray(data.available_slots) ? data.available_slots : [];
+                    this.allTimeSlots = Array.isArray(data.all_slots) ? data.all_slots : [];
+                    
+                    console.log(`✅ Loaded ${this.allTimeSlots.length} slots, ${this.reservedSlots.length} reserved`);
+                } else {
+                    console.error('Failed to fetch slots');
+                    this.generateDefaultSlots();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                this.generateDefaultSlots();
+            } finally {
+                this.loadingSlots = false;
+            }
+        },
+        generateDefaultSlots() {
+            // Fallback: générer les créneaux depuis les horaires du terrain
             const slots = [];
             const hours = this.field.horaires.split(' - ');
-            if (hours.length !== 2) return slots;
-            
-            const [startStr, endStr] = hours;
-            const start = parseInt(startStr.split(':')[0]);
-            const end = parseInt(endStr.split(':')[0]);
-            
-            for (let i = start; i < end; i++) {
-                const timeStr = `${String(i).padStart(2, '0')}:00`;
-                slots.push(timeStr);
+            if (hours.length === 2) {
+                const [startStr, endStr] = hours;
+                const start = parseInt(startStr.split(':')[0]);
+                const end = parseInt(endStr.split(':')[0]);
+                
+                for (let i = start; i < end; i++) {
+                    slots.push(`${i.toString().padStart(2, '0')}:00`);
+                }
             }
-            return slots;
+            this.allTimeSlots = slots;
+            this.availableSlots = slots;
+            this.reservedSlots = [];
         },
-        async fetchReservations() {
-            try {
-                const reservations = await api.users.getReservations(1);
-                this.reservedSlots = (reservations || [])
-                    .filter(r => r.reservation_date === this.selectedDate && r.field_id === this.field.id)
-                    .map(r => r.start_time);
-            } catch (error) {
-                console.error('Error fetching reservations:', error);
-            }
+        isSlotReserved(slot) {
+            return Array.isArray(this.reservedSlots) && this.reservedSlots.includes(slot);
+        },
+        isSlotSelected(slot) {
+            return Array.isArray(this.selectedTimeSlots) && this.selectedTimeSlots.includes(slot);
         },
         selectTimeSlot(slot) {
-            this.selectedTime = slot;
+            if (this.isSlotReserved(slot)) return;
+            
+            const index = this.selectedTimeSlots.indexOf(slot);
+            if (index > -1) {
+                this.selectedTimeSlots.splice(index, 1);
+            } else {
+                this.selectedTimeSlots.push(slot);
+            }
+            // Trier les créneaux sélectionnés
+            this.selectedTimeSlots.sort();
         },
         formatDate(dateStr) {
             const date = new Date(dateStr + 'T00:00:00');
@@ -157,28 +240,58 @@ export default {
         async confirmBooking() {
             const user = JSON.parse(localStorage.getItem('user'));
             if (!user) {
-                alert('Please login to book a field');
+                this.$toast.error('Please login to book a field', 'Authentication Required');
                 this.$router.push('/login');
                 return;
             }
 
+            if (this.selectedTimeSlots.length === 0) {
+                this.$toast.warning('Please select at least one time slot', 'No Time Selected');
+                return;
+            }
+
             try {
-                const endHour = parseInt(this.selectedTime) + this.duration;
-                const endTime = `${String(endHour).padStart(2, '0')}:00`;
+                const sorted = [...this.selectedTimeSlots].sort();
+                const startTime = sorted[0];
+                const lastSlot = sorted[sorted.length - 1];
+                const endHour = parseInt(lastSlot.split(':')[0]) + 1;
+                const endTime = `${endHour.toString().padStart(2, '0')}:00`;
                 
-                await api.users.createReservation(user.id, {
-                    field_id: this.field.id,
-                    reservation_date: this.selectedDate,
-                    start_time: this.selectedTime,
-                    end_time: endTime,
-                    total_price: this.totalPrice
+                const response = await fetch('http://localhost:3000/reservations', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        user_id: user.id,
+                        field_id: this.field.id,
+                        reservation_date: this.selectedDate,
+                        start_time: startTime,
+                        end_time: endTime,
+                        total_price: this.totalPrice
+                    })
                 });
 
-                alert(`Successfully booked ${this.field.nom} for ${this.formatDate(this.selectedDate)} at ${this.selectedTime}!`);
-                this.$emit('close');
-                this.$emit('booking-confirmed');
+                if (response.ok) {
+                    await response.json();
+                    // Success: close silently without alert
+                    this.$emit('close');
+                    this.$emit('booking-confirmed');
+                } else {
+                    const error = await response.json();
+                    if (error.conflicting_slots) {
+                        this.$toast.error(
+                            `Time slots ${error.conflicting_slots.join(', ')} are already reserved`,
+                            'Booking Conflict'
+                        );
+                        this.fetchAvailableSlots();
+                    } else {
+                        this.$toast.error(error.error || 'Unable to complete booking', 'Booking Failed');
+                    }
+                }
             } catch (error) {
-                alert('Error booking field: ' + error.message);
+                console.error('Error booking field:', error);
+                this.$toast.error('Network error. Please check your connection', 'Connection Error');
             }
         }
     }
@@ -313,9 +426,10 @@ export default {
     font-weight: 500;
     transition: all 0.3s ease;
     color: #333;
+    position: relative;
 }
 
-.time-slot:hover {
+.time-slot:hover:not(:disabled) {
     border-color: #667eea;
     background-color: #f5f7ff;
 }
@@ -326,11 +440,35 @@ export default {
     color: white;
 }
 
-.no-slots {
-    text-align: center;
+.time-slot.reserved {
+    background-color: #f0f0f0;
     color: #999;
+    border-color: #ddd;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.time-slot.reserved:hover {
+    background-color: #f0f0f0;
+    border-color: #ddd;
+    transform: none;
+}
+
+.reserved-icon {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    font-size: 10px;
+}
+
+.time-slot:disabled {
+    cursor: not-allowed;
+}
+
+.loading-slots {
+    text-align: center;
     padding: 20px;
-    font-style: italic;
+    color: #666;
 }
 
 .booking-summary {

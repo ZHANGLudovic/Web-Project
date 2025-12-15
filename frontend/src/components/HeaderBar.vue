@@ -77,7 +77,6 @@ export default {
             this.user = null;
             this.showMenu = false;
             eventBus.emit('user-logged-out');
-            alert('You have been logged out');
             this.$router.push('/');
         }
     }
