@@ -32,10 +32,16 @@
 
           <div class="card-body">
             <div class="field-info">
-              <img :src="reservation.image_url || '/Image/default-field.jpg'" 
-                   :alt="reservation.field_name" 
-                   class="field-image"
-                   @error="handleImageError">
+              <div class="field-image-wrapper">
+                <img v-if="reservation.image_url" 
+                     :src="reservation.image_url" 
+                     :alt="reservation.field_name" 
+                     class="field-image"
+                     @error="(e) => e.target.style.display='none'">
+                <div class="field-image-placeholder">
+                  <span>{{ getSportEmoji(reservation.sport) }}</span>
+                </div>
+              </div>
               <div class="field-details">
                 <h3>{{ reservation.field_name }}</h3>
                 <p class="sport-type">🏅 {{ reservation.sport }}</p>
@@ -177,7 +183,17 @@ export default {
       return minutes > 0 ? `${hours}h ${minutes}min` : `${hours}h`;
     },
     handleImageError(event) {
-      event.target.src = '/Image/default-field.jpg';
+      event.target.style.display = 'none';
+    },
+    getSportEmoji(sport) {
+      const sportEmojis = {
+        'Football': '⚽',
+        'Basketball': '🏀',
+        'Tennis': '🎾',
+        'Volleyball': '🏐',
+        'Badminton': '🏸'
+      };
+      return sportEmojis[sport] || '⚽';
     }
   }
 };
@@ -327,11 +343,37 @@ export default {
   margin-bottom: 20px;
 }
 
-.field-image {
+.field-image-wrapper {
+  flex-shrink: 0;
+  position: relative;
   width: 100px;
   height: 100px;
+}
+
+.field-image {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   border-radius: 12px;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.field-image-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  position: relative;
+  z-index: 1;
 }
 
 .field-details h3 {

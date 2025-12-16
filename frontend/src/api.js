@@ -77,7 +77,7 @@ const api = {
       }),
     getReservations: (userId, filters = {}) => {
       const params = new URLSearchParams(filters);
-      return apiCall(`/users/${userId}/reservations?${params}`);
+      return apiCall(`/reservations/user/${userId}?${params}`);
     },
     createReservation: (userId, reservationData) =>
       apiCall(`/users/${userId}/reservations`, {

@@ -87,6 +87,8 @@
 </template>
 
 <script>
+import { eventBus } from '../eventBus.js';
+
 export default {
     name: 'RentalDashboard',
     props: {
@@ -274,9 +276,15 @@ export default {
 
                 if (response.ok) {
                     await response.json();
-                    // Success: close silently without alert
+                    // Success: show confirmation message
+                    this.$toast.success(
+                        `Booking confirmed for ${this.field.nom} on ${this.formatDate(this.selectedDate)} from ${this.timeRange}. Total: €${this.totalPrice}`,
+                        'Booking Confirmed!'
+                    );
+                    // Emit events to update parent and global state
                     this.$emit('close');
                     this.$emit('booking-confirmed');
+                    eventBus.emit('booking-confirmed');
                 } else {
                     const error = await response.json();
                     if (error.conflicting_slots) {

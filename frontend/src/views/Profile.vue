@@ -163,6 +163,11 @@ export default {
             this.isEditing = false;
             this.reservationCount = 0;
         });
+
+        // Listen for booking confirmations and refresh reservations
+        eventBus.on('booking-confirmed', () => {
+            this.fetchReservations();
+        });
     },
     methods: {
         async fetchReservations() {

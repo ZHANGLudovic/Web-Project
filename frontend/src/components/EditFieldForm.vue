@@ -201,31 +201,41 @@ export default {
 
 .modal-header h2 {
   margin: 0;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.3px;
+}
+
+.modal-header h2::before {
+  content: "✏️";
+  margin-right: 12px;
 }
 
 .close-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  font-size: 32px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  font-size: 28px;
   cursor: pointer;
   color: white;
   padding: 8px;
-  width: 48px;
-  height: 48px;
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  font-weight: 700;
 }
 
 .close-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: rotate(90deg);
+  background: rgba(255, 255, 255, 0.25);
+  transform: rotate(90deg) scale(1.1);
+  box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
+}
+
+.close-btn:active {
+  transform: rotate(90deg) scale(0.95);
 }
 
 form {
@@ -260,31 +270,46 @@ form {
   box-sizing: border-box;
 }
 
+.form-group input:hover,
+.form-group select:hover {
+  border-color: #d0dae8;
+  background-color: white;
+}
+
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #2f80ed;
-  box-shadow: 0 0 0 4px rgba(47, 128, 237, 0.1);
+  border-color: #667eea;
+  background-color: white;
+  box-shadow: 0 0 0 5px rgba(102, 126, 234, 0.12);
   transform: translateY(-2px);
 }
 
 .form-group textarea {
   width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #e9ecef;
-  border-radius: 8px;
-  font-size: 16px;
+  padding: 14px 18px;
+  border: 2px solid #e0e6f0;
+  border-radius: 10px;
+  font-size: 15px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   resize: vertical;
   transition: all 0.3s ease;
   box-sizing: border-box;
-  min-height: 100px;
+  min-height: 110px;
+  background-color: #f8f9fc;
+  font-weight: 500;
+}
+
+.form-group textarea:hover {
+  border-color: #d0dae8;
+  background-color: white;
 }
 
 .form-group textarea:focus {
   outline: none;
-  border-color: #2f80ed;
-  box-shadow: 0 0 0 4px rgba(47, 128, 237, 0.1);
+  border-color: #667eea;
+  background-color: white;
+  box-shadow: 0 0 0 5px rgba(102, 126, 234, 0.12);
   transform: translateY(-2px);
 }
 
@@ -321,46 +346,59 @@ form {
 
 .submit-btn, .cancel-btn {
   flex: 1;
-  padding: 14px 24px;
+  padding: 16px 28px;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   letter-spacing: 0.5px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  text-transform: uppercase;
 }
 
 .submit-btn {
-  background: linear-gradient(135deg, #28a745, #218838);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
+}
+
+.submit-btn::before {
+  content: "💾 ";
 }
 
 .submit-btn:hover {
-  background: linear-gradient(135deg, #218838, #1e7e34);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(40, 167, 69, 0.3);
+  background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(102, 126, 234, 0.35);
 }
 
 .submit-btn:active {
-  transform: translateY(0);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(102, 126, 234, 0.25);
 }
 
 .cancel-btn {
-  background: linear-gradient(135deg, #6c757d, #5a6268);
-  color: white;
+  background: linear-gradient(135deg, #e8eef8 0%, #f0f4f8 100%);
+  color: #667eea;
+  border: 2px solid #d8dce8;
+}
+
+.cancel-btn::before {
+  content: "✕ ";
+  font-weight: 900;
 }
 
 .cancel-btn:hover {
-  background: linear-gradient(135deg, #5a6268, #495057);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(108, 117, 125, 0.3);
+  background: linear-gradient(135deg, #d8dce8 0%, #e8eef8 100%);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(102, 126, 234, 0.2);
+  border-color: #c8cde0;
 }
 
 .cancel-btn:active {
-  transform: translateY(0);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(102, 126, 234, 0.12);
 }
 
 /* Scrollbar styling */

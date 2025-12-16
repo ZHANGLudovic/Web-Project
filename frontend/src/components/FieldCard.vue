@@ -189,37 +189,51 @@ export default {
 }
 
 .btn-edit {
-  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+  background: linear-gradient(135deg, #0099ff 0%, #0080cc 100%);
   color: white;
   border: 2px solid transparent;
   position: relative;
+  font-weight: 700;
 }
 
 .btn-edit::before {
-  margin-right: 4px;
+  content: "✏️";
+  margin-right: 6px;
 }
 
 .btn-edit:hover {
-  background: linear-gradient(135deg, #5a6268 0%, #545b62 100%);
-  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, #0088dd 0%, #0070bb 100%);
+  box-shadow: 0 6px 16px rgba(0, 153, 255, 0.4);
+  transform: translateY(-3px);
+}
+
+.btn-edit:active {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 153, 255, 0.3);
 }
 
 .btn-delete {
-  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  background: linear-gradient(135deg, #ff4757 0%, #ee5a6f 100%);
   color: white;
   border: 2px solid transparent;
   position: relative;
+  font-weight: 700;
 }
 
 .btn-delete::before {
-  margin-right: 4px;
+  content: "🗑️";
+  margin-right: 6px;
 }
 
 .btn-delete:hover {
-  background: linear-gradient(135deg, #495057 0%, #343a40 100%);
-  box-shadow: 0 4px 12px rgba(73, 80, 87, 0.4);
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, #ff3838 0%, #e63c4e 100%);
+  box-shadow: 0 6px 16px rgba(255, 71, 87, 0.4);
+  transform: translateY(-3px);
+}
+
+.btn-delete:active {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(255, 71, 87, 0.3);
 }
 
 @media (max-width: 768px) {
