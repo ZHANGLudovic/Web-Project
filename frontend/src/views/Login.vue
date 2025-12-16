@@ -81,8 +81,9 @@ export default {
         const data = await response.json();
 
         if (response.ok) {
-          // Success - silent login
+          // Success - show notification and navigate
           localStorage.setItem('user', JSON.stringify(data.user));
+          this.$toast.success(`Welcome back, ${data.user.username}!`, 'Login Successful');
           eventBus.emit('user-logged-in', data.user);
           this.$router.push('/');
         } else {

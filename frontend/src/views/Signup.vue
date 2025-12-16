@@ -123,6 +123,7 @@ export default {
         if (response.ok) {
           // Success - auto login and redirect
           localStorage.setItem('user', JSON.stringify(data.user));
+          this.$toast.success('Welcome! Your account has been created successfully', 'Account Created');
           eventBus.emit('user-logged-in', data.user);
           this.$router.push('/');
         } else {

@@ -8,26 +8,17 @@
 
         <div>
             <FieldCard
-                v-for="f in paginatedFields"
-                :key="f.id"
-                :field="f"
-                :is-admin="isAdmin"
-                @details="handleDetails"
-                @edit="handleEdit"
-                @delete="handleDelete"
-                @rent="handleRent"
-                @cancel-reservation="handleCancelReservation"
+            v-for="f in filteredFields"
+            :key="f.id"
+            :field="f"
+            :is-admin="isAdmin"
+            @details="handleDetails"
+            @edit="handleEdit"
+            @delete="handleDelete"
+            @rent="handleRent"
+            @cancel-reservation="handleCancelReservation"
             />
         </div>
-
-        <Pagination 
-            v-if="filteredFields.length > 0"
-            :current-page="currentPage"
-            :total-pages="totalPages"
-            :total-items="filteredFields.length"
-            @page-change="handlePageChange"
-        />
-
         <FieldDetails v-if="showDetails" :field="fieldDetails" @close="showDetails = false" />
         <RentalDashboard v-if="showRental" :field="rentalField" @close="showRental = false" @booking-confirmed="handleBookingConfirmed" />
     </div>
@@ -40,12 +31,11 @@ import SportFilters from '../components/SportFilters.vue';
 import FieldCard from '../components/FieldCard.vue';
 import FieldDetails from '../components/FieldDetails.vue';
 import RentalDashboard from '../components/RentalDashboard.vue';
-import Pagination from '../components/Pagination.vue';
 import api from '../api.js';
 
 export default {
     name: 'HomePage',
-    components: { SearchBar, SportFilters, FieldCard, FieldDetails, RentalDashboard, Pagination },
+    components: { SearchBar, SportFilters, FieldCard, FieldDetails, RentalDashboard },
 
 
     props: ['fields'],
@@ -53,15 +43,13 @@ export default {
 
     data() {
         return {
-            selectedSports: ['all'],
-            showDetails: false,
-            fieldDetails: null,
-            searchQuery: '',
-            fetchedFields: [],
-            showRental: false,
-            rentalField: null,
-            currentPage: 1,
-            itemsPerPage: 5
+        selectedSports: ['all'],
+        showDetails: false,
+        fieldDetails: null,
+        searchQuery: '',
+        fetchedFields: [],
+        showRental: false,
+        rentalField: null
         };
     },
 
@@ -70,53 +58,40 @@ export default {
     },
 
     computed: {
-        isAdmin() {
-            const storedUser = localStorage.getItem('user');
-            if (storedUser) {
-                try {
-                    const user = JSON.parse(storedUser);
-                    return user && user.role === 'admin';
-                } catch (e) {
-                    return false;
-                }
+    isAdmin() {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            try {
+                const user = JSON.parse(storedUser);
+                return user && user.role === 'admin';
+            } catch (e) {
+                return false;
             }
-            return false;
-        },
-        allFields() {
-            return [...this.fetchedFields, ...this.fields];
-        },
-        filteredFields() {
-            let result = this.allFields;
-
-            if (!this.selectedSports.includes('all')) {
-                result = result.filter(f => this.selectedSports.includes(f.sport));
-            }
-
-            if (this.searchQuery.trim()) {
-                const query = this.searchQuery.toLowerCase();
-                result = result.filter(f => 
-                    f.nom.toLowerCase().includes(query) || 
-                    f.ville.toLowerCase().includes(query)
-                );
-            }
-
-            return result;
-        },
-        totalPages() {
-            return Math.ceil(this.filteredFields.length / this.itemsPerPage);
-        },
-        paginatedFields() {
-            const start = (this.currentPage - 1) * this.itemsPerPage;
-            const end = start + this.itemsPerPage;
-            return this.filteredFields.slice(start, end);
         }
+        return false;
     },
+    allFields() {
+        return [...this.fetchedFields, ...this.fields];
+    },
+    filteredFields() {
+        let result = this.allFields;
 
-    watch: {
-        filteredFields() {
-            // Reset to page 1 when filters change
-            this.currentPage = 1;
+        
+        if (!this.selectedSports.includes('all')) {
+            result = result.filter(f => this.selectedSports.includes(f.sport));
         }
+
+        
+        if (this.searchQuery.trim()) {
+            const query = this.searchQuery.toLowerCase();
+            result = result.filter(f => 
+                f.nom.toLowerCase().includes(query) || 
+                f.ville.toLowerCase().includes(query)
+            );
+        }
+
+        return result;
+    },
     },
     
     methods: {
@@ -139,9 +114,6 @@ export default {
             } catch (error) {
                 console.error('Error fetching fields:', error);
             }
-        },
-        handlePageChange(page) {
-            this.currentPage = page;
         },
         getDefaultImage(sport) {
             const sportLower = (sport || '').toLowerCase();
@@ -185,7 +157,7 @@ export default {
             const field = this.allFields.find(f => f.id === id);
             if (field) {
                 console.log(`Reservation for "${field.nom}" cancelled`);
-                alert(`The reservation for "${field.nom}" has been cancelled.`);
+                this.$toast.success(`"${field.nom}" reservation cancelled`, 'Booking Cancelled');
             }
         }
     }
