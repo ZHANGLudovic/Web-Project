@@ -59,13 +59,21 @@
         <button @click="rentField" class="btn-rent">Rent This Field</button>
         <button @click="editField" v-if="isAdmin" class="btn-edit">Edit Field</button>
       </div>
+
+      <!-- Reviews Section -->
+      <ReviewsSection :fieldId="parseInt(field.id || 0)" />
     </div>
   </div>
 </template>
 
 <script>
+import ReviewsSection from '../components/ReviewsSection.vue';
+
 export default {
   name: 'FieldDetailsPage',
+  components: {
+    ReviewsSection
+  },
   data() {
     return {
       field: null,

@@ -1,5 +1,18 @@
 <template>
   <div class="reservations-page">
+    <!-- Cancel Confirmation Modal -->
+    <div v-if="showCancelModal" class="modal-overlay" @click.self="showCancelModal = false">
+      <div class="confirmation-modal">
+        <div class="modal-icon">⚠️</div>
+        <h3>Cancel Reservation?</h3>
+        <p class="modal-message">Are you sure you want to cancel this reservation? This action cannot be undone.</p>
+        <div class="modal-buttons">
+          <button @click="showCancelModal = false" class="btn-keep">Keep Booking</button>
+          <button @click="confirmCancelReservation" class="btn-confirm-cancel">Yes, Cancel It</button>
+        </div>
+      </div>
+    </div>
+
     <div class="container">
       <h1 class="page-title">📅 My Reservations</h1>
       
@@ -89,7 +102,9 @@ export default {
     return {
       reservations: [],
       loading: true,
-      user: null
+      user: null,
+      showCancelModal: false,
+      cancelingReservationId: null
     };
   },
   mounted() {
@@ -130,9 +145,12 @@ export default {
       }
     },
     async cancelReservation(reservationId) {
-      if (!confirm('Are you sure you want to cancel this reservation?')) {
-        return;
-      }
+      this.cancelingReservationId = reservationId;
+      this.showCancelModal = true;
+    },
+    async confirmCancelReservation() {
+      const reservationId = this.cancelingReservationId;
+      this.showCancelModal = false;
 
       try {
         const response = await fetch(`http://localhost:3000/reservations/${reservationId}`, {
@@ -144,8 +162,8 @@ export default {
         });
 
         if (response.ok) {
-          // Remove unused variable
           this.reservations = this.reservations.filter(r => r.id !== reservationId);
+          this.$toast.success('Your reservation has been cancelled', 'Booking Cancelled');
         } else {
           const error = await response.json();
           this.$toast.error(error.error || 'Unable to cancel reservation', 'Cancellation Failed');
@@ -436,6 +454,141 @@ export default {
   text-align: center;
   color: #999;
   font-size: 12px;
+}
+
+/* Cancel Confirmation Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  backdrop-filter: blur(4px);
+  animation: fadeInBackdrop 0.3s ease;
+}
+
+@keyframes fadeInBackdrop {
+  from {
+    background-color: rgba(0, 0, 0, 0);
+  }
+  to {
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+}
+
+.confirmation-modal {
+  background: white;
+  border-radius: 16px;
+  padding: 40px 35px;
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideInUp 0.4s ease;
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  animation: wobble 0.6s ease;
+}
+
+@keyframes wobble {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+
+.confirmation-modal h3 {
+  margin: 0 0 12px 0;
+  font-size: 24px;
+  color: #1a1a1a;
+  font-weight: 700;
+}
+
+.modal-message {
+  color: #666;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  flex-direction: column;
+}
+
+.btn-keep, .btn-confirm-cancel {
+  padding: 14px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-keep {
+  background: linear-gradient(135deg, #e8eef8 0%, #f0f4f8 100%);
+  color: #667eea;
+  border: 2px solid #d8dce8;
+}
+
+.btn-keep::before {
+  content: "✓ ";
+  margin-right: 6px;
+}
+
+.btn-keep:hover {
+  background: linear-gradient(135deg, #d8dce8 0%, #e8eef8 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+  border-color: #c8cde0;
+}
+
+.btn-confirm-cancel {
+  background: linear-gradient(135deg, #ff4757 0%, #ee5a6f 100%);
+  color: white;
+  box-shadow: 0 6px 16px rgba(255, 71, 87, 0.2);
+}
+
+.btn-confirm-cancel::before {
+  content: "🗑️ ";
+}
+
+.btn-confirm-cancel:hover {
+  background: linear-gradient(135deg, #ff3838 0%, #e63c4e 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(255, 71, 87, 0.35);
+}
+
+.btn-confirm-cancel:active {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(255, 71, 87, 0.25);
+}
+
+.btn-keep:active {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(102, 126, 234, 0.12);
 }
 
 @media (max-width: 768px) {

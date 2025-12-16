@@ -4,7 +4,14 @@
       <img :src="displayImage" :alt="field.nom" />
     </div>
     <div class="info">
-      <h3>{{ field.nom }}</h3>
+      <div class="header-row">
+        <h3>{{ field.nom }}</h3>
+        <div v-if="field.rating" class="rating-badge">
+          <span class="star">⭐</span>
+          <span class="rating-number">{{ field.rating.toFixed(1) }}</span>
+          <span class="review-count">({{ field.review_count || 0 }})</span>
+        </div>
+      </div>
       <p class="meta">{{ field.sport }} · {{ field.ville }} · {{ field.prix }}€</p>
       <p class="desc">{{ field.description }}</p>
       <div class="actions">
@@ -113,12 +120,48 @@ export default {
   gap: 8px;
 }
 
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
 .info h3 {
   margin: 0;
   font-size: 20px;
   font-weight: 700;
   color: #1a1a1a;
   letter-spacing: -0.3px;
+}
+
+.rating-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #333;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+  flex-shrink: 0;
+}
+
+.rating-badge .star {
+  font-size: 14px;
+}
+
+.rating-number {
+  color: #333;
+}
+
+.review-count {
+  font-size: 11px;
+  color: #555;
+  opacity: 0.8;
 }
 
 .meta { 
@@ -246,6 +289,11 @@ export default {
     width: 100%;
     height: 180px;
     flex: none;
+  }
+
+  .header-row {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .actions {

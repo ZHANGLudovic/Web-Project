@@ -146,25 +146,107 @@ db.serialize(() => {
       (13, 'Pro Basketball Court', 'Basketball', '147 Pro St', 'Grenoble', 3000, '08:00 - 22:00', '2024-12-31', 32, 'Professional-grade basketball court with top amenities.', '/Image/Basket3.jpg', 20)
   `);
   
-  // Créer un compte admin par défaut
+  // Créer des utilisateurs de démonstration
   try {
     const bcrypt = require('bcrypt');
     const adminPassword = bcrypt.hashSync('admin123', 10);
+    const userPassword = bcrypt.hashSync('user123', 10);
     
     db.run(`
       INSERT OR IGNORE INTO users (id, email, username, password, role)
-      VALUES (1, 'admin@sportcity.com', 'admin', ?, 'admin')
-    `, [adminPassword], (err) => {
-      if (err) {
-        console.error('Error creating admin user:', err);
+      VALUES 
+        (1, 'admin@sportcity.com', 'admin', ?, 'admin'),
+        (2, 'john_doe@email.com', 'john_doe', ?, 'user'),
+        (3, 'sarah_smith@email.com', 'sarah_smith', ?, 'user'),
+        (4, 'mike_johnson@email.com', 'mike_johnson', ?, 'user'),
+        (5, 'emma_wilson@email.com', 'emma_wilson', ?, 'user'),
+        (6, 'alex_brown@email.com', 'alex_brown', ?, 'user'),
+        (7, 'lisa_davis@email.com', 'lisa_davis', ?, 'user'),
+        (8, 'david_miller@email.com', 'david_miller', ?, 'user')
+    `, [adminPassword, userPassword, userPassword, userPassword, userPassword, userPassword, userPassword, userPassword], (err) => {
+      if (err && !err.message.includes('UNIQUE constraint failed')) {
+        console.error('Error creating users:', err);
       } else {
-        console.log('✅ Admin user ready: admin@sportcity.com / admin123');
+        console.log('✅ Demo users ready');
       }
     });
   } catch (error) {
-    console.error('⚠️ bcrypt not available, skipping admin user creation');
+    console.error('⚠️ bcrypt not available, skipping user creation');
     console.log('Install bcrypt: npm install bcrypt');
   }
+
+  // SEED REVIEWS DATA
+  setTimeout(() => {
+    db.run(`
+      INSERT OR IGNORE INTO reviews (field_id, user_id, rating, comment, created_at)
+      VALUES 
+        (1, 2, 5, 'Amazing field! The grass is perfectly maintained and the lighting is excellent for evening games. Definitely coming back!', datetime('now', '-10 days')),
+        (1, 4, 5, 'Best football field in Paris! Professional quality turf and friendly staff. Worth every euro.', datetime('now', '-5 days')),
+        (1, 5, 4, 'Very good condition. Could use some more trash cans, but otherwise perfect for our team practice.', datetime('now', '-3 days')),
+        
+        (2, 2, 5, 'Outstanding basketball court! The climate control is perfect and the hoops are regulation height. Loved it!', datetime('now', '-12 days')),
+        (2, 6, 4, 'Good quality court. Some squeaking on the floor but nothing serious. Great for pickup games.', datetime('now', '-7 days')),
+        (2, 7, 5, 'The best indoor basketball experience! Professional court, great atmosphere. Highly recommend!', datetime('now', '-4 days')),
+        
+        (3, 5, 4, 'Nice tennis court with good maintenance. The only downside is limited parking nearby.', datetime('now', '-6 days')),
+        (3, 8, 5, 'Excellent facility! The hard court surface is ideal for serious matches. Will definitely book again!', datetime('now', '-2 days')),
+        
+        (4, 4, 5, 'Fantastic badminton court! The lighting is perfect and the floor is very responsive. Loved every minute.', datetime('now', '-11 days')),
+        (4, 6, 4, 'Good badminton facility. A bit cramped during peak hours but well-maintained.', datetime('now', '-6 days')),
+        
+        (5, 2, 5, 'Best volleyball court ever! The sand is clean and the setup is professional. Had an incredible game here!', datetime('now', '-8 days')),
+        (5, 7, 4, 'Nice volleyball court with good sand quality. Wish there were more shade areas nearby.', datetime('now', '-4 days')),
+        
+        (6, 4, 4, 'Good field with decent facilities. Slightly noisy from the street but nothing that ruins the experience.', datetime('now', '-5 days')),
+        (6, 8, 5, 'Perfect for casual and serious matches. Great location and impeccable maintenance!', datetime('now', '-1 days')),
+        
+        (7, 5, 5, 'The sunset views while playing tennis are absolutely beautiful! Court quality is also top-notch.', datetime('now', '-9 days')),
+        (7, 6, 5, 'Amazing experience! The scenic location combined with excellent court condition makes this my favorite spot.', datetime('now', '-3 days')),
+        
+        (8, 2, 4, 'Nice modern court. Good facilities overall. Could use better ventilation but otherwise great!', datetime('now', '-7 days')),
+        (8, 7, 5, 'Excellent city basketball court! Professional setup, great atmosphere, highly recommended!', datetime('now', '-2 days')),
+        
+        (9, 4, 4, 'Good badminton court with fast flooring. Only minor issue is limited seating for spectators.', datetime('now', '-6 days')),
+        
+        (10, 5, 5, 'Beautiful beach volleyball court! Perfect sand and amazing ocean views. Absolutely loved it!', datetime('now', '-10 days')),
+        (10, 8, 5, 'One of the best volleyball courts Ive played on! Great location, great setup, highly recommend!', datetime('now', '-1 days')),
+        
+        (11, 2, 5, 'Elite quality football pitch! Professional-grade maintenance and excellent facilities throughout.', datetime('now', '-9 days')),
+        (11, 4, 4, 'Great football field. Well-maintained and spacious. Just a bit pricey but worth it.', datetime('now', '-4 days')),
+        (11, 6, 5, 'Outstanding! This is the kind of pitch serious teams dream about. Perfect in every way!', datetime('now', '-2 days')),
+        
+        (12, 7, 5, 'Professional tennis facility! Would totally recommend this to anyone serious about tennis.', datetime('now', '-5 days')),
+        
+        (13, 5, 5, 'Pro-grade basketball court! Regulation everything, perfect condition. This is where I come for serious play!', datetime('now', '-8 days')),
+        (13, 8, 4, 'Excellent pro court. Facilities are top-notch. Parking could be better but overall very satisfied.', datetime('now', '-3 days'))
+      `
+    , (err) => {
+      if (err && !err.message.includes('UNIQUE constraint failed')) {
+        console.error('Error seeding reviews:', err);
+      } else {
+        console.log('✅ Review data seeded successfully');
+        
+        // Update field ratings based on reviews
+        db.run(`
+          UPDATE fields 
+          SET rating = (
+            SELECT AVG(rating) FROM reviews WHERE reviews.field_id = fields.id
+          ),
+          review_count = (
+            SELECT COUNT(*) FROM reviews WHERE reviews.field_id = fields.id
+          )
+          WHERE id IN (SELECT DISTINCT field_id FROM reviews)
+        `, (err) => {
+          if (err) {
+            console.error('Error updating field ratings:', err);
+          } else {
+            console.log('✅ Field ratings updated');
+          }
+        });
+      }
+    });
+  }, 1000);
+
 });
 
 module.exports = db;

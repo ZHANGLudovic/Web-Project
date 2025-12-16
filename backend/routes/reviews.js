@@ -109,10 +109,24 @@ router.post('/', (req, res) => {
                     return res.status(500).json({ error: 'Failed to update field rating' });
                   }
 
-                  res.json({
-                    message: 'Review created successfully',
-                    id: this.lastID
-                  });
+                  // Fetch the created review with username
+                  db.get(
+                    `SELECT r.*, u.username 
+                     FROM reviews r 
+                     JOIN users u ON r.user_id = u.id 
+                     WHERE r.id = ?`,
+                    [this.lastID],
+                    (err, review) => {
+                      if (err) {
+                        return res.status(500).json({ error: 'Database error' });
+                      }
+
+                      res.json({
+                        message: 'Review created successfully',
+                        review: review
+                      });
+                    }
+                  );
                 }
               );
             }

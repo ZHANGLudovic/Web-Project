@@ -54,6 +54,10 @@
             {{ field.description }}
           </div>
         </div>
+
+        <ReviewsSection 
+          :fieldId="field.id"
+        />
       </div>
       <div class="modal-footer">
         <button @click="close" class="close-action-btn">Close</button>
@@ -63,8 +67,13 @@
 </template>
 
 <script>
+import ReviewsSection from './ReviewsSection.vue';
+
 export default {
   name: 'FieldDetails',
+  components: {
+    ReviewsSection
+  },
   props: {
     field: {
       type: Object,
@@ -103,7 +112,7 @@ export default {
   background-color: white;
   border-radius: 12px;
   width: 100%;
-  max-width: 700px;
+  max-width: 900px;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
