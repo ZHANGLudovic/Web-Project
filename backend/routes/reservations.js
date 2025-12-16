@@ -211,11 +211,10 @@ router.delete("/:id", (req, res) => {
             const remainingSlots = afterResult ? afterResult.count : 0;
             console.log(`Reservation ${id} deleted. Slots before: ${slotsCount}, after: ${remainingSlots}`);
             
+            console.log(`Reservation ${id} deleted successfully, ${slotsCount} time slots freed`);
             res.json({ 
               message: "Reservation deleted successfully",
-              freed_slots: slotsCount,
-              field_id: reservation.field_id,
-              date: reservation.reservation_date
+              freed_slots: slotsCount
             });
           });
         });

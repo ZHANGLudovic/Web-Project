@@ -1,34 +1,34 @@
 <template>
-    <header class="header"> 
-        <router-link to="/" class="logo-link">
-            <div class="logo">🏟️ SportCity</div>
-        </router-link>
+  <header class="header"> 
+      <router-link to="/" class="logo-link">
+          <div class="logo">🏟️ SportCity</div>
+      </router-link>
 
-        <div class="auth-buttons">
-            <!-- Show when not logged in -->
-            <template v-if="!user">
-                <router-link to="/login"><button class="btn-login">Login</button></router-link>
-                <router-link to="/signup"><button class="btn-signup">Sign Up</button></router-link>
-            </template>
-            <!-- Show when logged in -->
-            <div v-else class="user-menu">
-                <button @click="toggleMenu" class="user-button">
-                    👤 {{ user.username }}
-                </button>
-                <div v-if="showMenu" class="dropdown-menu">
-                    <router-link to="/profile" class="menu-item">
-                        <span>👤 Profile</span>
-                    </router-link>
-                    <router-link to="/reservations" class="menu-item">
-                        <span>📅 My Reservations</span>
-                    </router-link>
-                    <button @click="logout" class="menu-item logout-item">
-                        <span>🚪 Logout</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </header>
+      <div class="auth-buttons">
+          <!-- Show when not logged in -->
+          <template v-if="!user">
+              <router-link to="/login"><button class="btn-login">Login</button></router-link>
+              <router-link to="/signup"><button class="btn-signup">Sign Up</button></router-link>
+          </template>
+          <!-- Show when logged in -->
+          <div v-if="user" class="user-menu">
+              <button @click="toggleMenu" class="user-button">
+                  👤 {{ user.username }}
+              </button>
+              <div v-if="showMenu" class="dropdown-menu">
+                  <router-link to="/profile" class="menu-item">
+                      <span>👤 Profile</span>
+                  </router-link>
+                  <router-link to="/reservations" class="menu-item">
+                      <span>📅 My Reservations</span>
+                  </router-link>
+                  <button @click="logout" class="menu-item logout">
+                    Logout
+                  </button>
+              </div>
+          </div>
+      </div>
+  </header>
 </template>
 
 
@@ -274,6 +274,19 @@ export default {
 .logout-item:hover {
     background-color: #fee;
     color: #c0392b;
+}
+
+.menu-item.logout {
+  color: #dc3545;
+  font-weight: 700;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+.menu-item.logout:hover {
+  background-color: #fff5f5;
+  color: #c82333;
 }
 
 /* Responsive design */

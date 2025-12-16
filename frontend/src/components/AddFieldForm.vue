@@ -1,66 +1,123 @@
 <template>
-  <div class="modal-overlay" @click="close">
-    <div class="modal-content" @click.stop>
+  <div class="modal-overlay" @click.self="$emit('close')">
+    <div class="modal-container">
       <div class="modal-header">
-        <h2>Add a new field</h2>
-        <button @click="close" class="close-btn">&times;</button>
+        <h2>Add New Field</h2>
+        <button @click="$emit('close')" class="close-btn">✕</button>
       </div>
-      <form @submit.prevent="submit">
-        <div class="form-group">
-          <label for="name">Field Name:</label>
-          <input v-model="form.name" type="text" id="name" required>
-        </div>
-        <div class="form-group">
-          <label for="location">Address:</label>
-          <input v-model="form.location" type="text" id="location" required>
-        </div>
-        <div class="form-group">
-          <label for="ville">City:</label>
-          <input v-model="form.ville" type="text" id="ville" required>
-        </div>
-        <div class="form-group">
-          <label for="size">Size (m²):</label>
-          <input v-model="form.size" type="number" id="size" required>
-        </div>
-        <div class="form-group">
-          <label for="type">Sport Type:</label>
-          <select v-model="form.type" id="type" required>
-            <option value="">Select a sport</option>
-            <option v-for="sport in sports" :key="sport" :value="sport">
-              {{ sport }}
-            </option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="horaires">Hours:</label>
-          <input v-model="form.horaires" type="text" id="horaires" placeholder="Ex: 09:00 - 18:00">
-        </div>
-        <div class="form-group">
-          <label for="date">Available Date:</label>
-          <input v-model="form.date" type="date" id="date">
-        </div>
-        <div class="form-group">
-          <label for="prix">Price (€/hour):</label>
-          <input v-model="form.prix" type="number" id="prix" step="0.01"> 
-        </div>
-        <div class="form-group">
-          <label for="description">Description (max 500 characters):</label>
-          <textarea v-model="form.description" id="description" maxlength="500" rows="4"></textarea>
-          <span class="char-count">{{ form.description.length }}/500</span>
-        </div>
-        <div class="form-group">
-          <label>
-            Image (optional):
-            <input type="file" accept="image/*" @change="onFileChange" />
-          </label>
-          <input v-model="imageUrl" placeholder="or Image URL (optional)" />
-          <div v-if="preview" class="preview">
-            <img :src="preview" alt="preview" />
+
+      <form @submit.prevent="submitForm" class="field-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="name">Field Name *</label>
+            <input 
+              v-model="formData.name" 
+              id="name" 
+              type="text" 
+              placeholder="e.g., Central Stadium"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="type">Sport Type *</label>
+            <select v-model="formData.type" id="type" required>
+              <option value="">Select a sport</option>
+              <option value="Football">Football</option>
+              <option value="Basketball">Basketball</option>
+              <option value="Tennis">Tennis</option>
+              <option value="Volleyball">Volleyball</option>
+              <option value="Badminton">Badminton</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="ville">City *</label>
+            <input 
+              v-model="formData.ville" 
+              id="ville" 
+              type="text" 
+              placeholder="e.g., Paris"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="location">Address *</label>
+            <input 
+              v-model="formData.location" 
+              id="location" 
+              type="text" 
+              placeholder="e.g., 123 Main Street"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="size">Size (m²) *</label>
+            <input 
+              v-model.number="formData.size" 
+              id="size" 
+              type="number" 
+              min="0"
+              placeholder="e.g., 5000"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="prix">Price per hour (€) *</label>
+            <input 
+              v-model.number="formData.prix" 
+              id="prix" 
+              type="number" 
+              min="0"
+              step="0.01"
+              placeholder="e.g., 25"
+              required
+            />
+          </div>
+
+          <div class="form-group full-width">
+            <label for="horaires">Opening Hours *</label>
+            <input 
+              v-model="formData.horaires" 
+              id="horaires" 
+              type="text" 
+              placeholder="e.g., 08:00 - 22:00"
+              required
+            />
+          </div>
+
+          <div class="form-group full-width">
+            <label for="description">Description</label>
+            <textarea 
+              v-model="formData.description" 
+              id="description" 
+              rows="4"
+              placeholder="Describe the field facilities, amenities, etc."
+            ></textarea>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="image">Image URL</label>
+            <input 
+              v-model="formData.image" 
+              id="image" 
+              type="url" 
+              placeholder="https://example.com/image.jpg"
+            />
           </div>
         </div>
+
         <div class="form-actions">
-          <button type="submit" class="submit-btn">Add</button>
-          <button type="button" @click="close" class="cancel-btn">Cancel</button>
+          <button type="button" @click="$emit('close')" class="btn-cancel">
+            Cancel
+          </button>
+          <button type="submit" class="btn-submit">
+            <span class="btn-icon">+</span>
+            Add Field
+          </button>
         </div>
       </form>
     </div>
@@ -72,60 +129,39 @@ export default {
   name: 'AddFieldForm',
   data() {
     return {
-      form: {
+      formData: {
         name: '',
+        type: '',
         location: '',
         ville: '',
-        size: '',
-        type: '',
+        size: null,
         horaires: '',
-        date: '',
-        prix: '',
-        description: ''
-      },
-      sports: ['Football', 'Basketball', 'Tennis', 'Volleyball'],
-      imageUrl: '',
-      preview: null
+        prix: null,
+        description: '',
+        image: ''
+      }
     };
   },
   methods: {
-    onFileChange(e) {
-      const file = e.target.files && e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.preview = reader.result; // base64
-        this.imageUrl = ''; // clear URL when file chosen
-      };
-      reader.readAsDataURL(file);
+    submitForm() {
+      this.$emit('submit', this.formData);
+      this.resetForm();
     },
-    submit() {
-      if (!this.form.type) {
-        alert('Please select a sport type');
-        return;
-      }
-      const payload = {
-        name: this.form.name,
-        type: this.form.type,
-        location: this.form.location,
-        ville: this.form.ville,
-        size: this.form.size,
-        horaires: this.form.horaires,
-        date: this.form.date,
-        prix: this.form.prix,
-        description: this.form.description,
-        image: this.preview || (this.imageUrl ? this.imageUrl.trim() : null)
+    resetForm() {
+      this.formData = {
+        name: '',
+        type: '',
+        location: '',
+        ville: '',
+        size: null,
+        horaires: '',
+        prix: null,
+        description: '',
+        image: ''
       };
-      this.$emit('submit', payload);
-      this.form = { name: '', location: '', ville: '', size: '', type: '', horaires: '', date: '', prix: '', description: '' };
-      this.preview = null;
-      this.imageUrl = '';
-    },
-    close() {
-      this.$emit('close');
     }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -135,29 +171,39 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   z-index: 1000;
-  padding: 20px;
-  overflow-y: auto;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease;
 }
 
-.modal-content {
-  background-color: white;
-  border-radius: 12px;
-  padding: 0;
-  width: 100%;
-  max-width: 600px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  animation: slideIn 0.3s ease;
-}
-
-@keyframes slideIn {
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-container {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -166,173 +212,191 @@ export default {
 }
 
 .modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 25px 30px;
+  border-radius: 16px 16px 0 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 25px 30px;
-  background: linear-gradient(135deg, #2f80ed 0%, #1e5cb8 100%);
-  color: white;
-  border-radius: 12px 12px 0 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .modal-header h2 {
   margin: 0;
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 700;
 }
 
 .close-btn {
-  background: none;
+  background: rgba(255, 255, 255, 0.2);
   border: none;
-  font-size: 28px;
-  cursor: pointer;
   color: white;
-  padding: 0;
-  width: 32px;
-  height: 32px;
+  font-size: 24px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
   transform: rotate(90deg);
 }
 
-form {
+.field-form {
   padding: 30px;
-  max-height: 70vh;
-  overflow-y: auto;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
 }
 
 .form-group {
-  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
 }
 
 .form-group label {
-  display: block;
-  margin-bottom: 8px;
   font-weight: 600;
-  color: #333;
   font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  color: #333;
 }
 
 .form-group input,
-.form-group select {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+.form-group select,
+.form-group textarea {
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
   font-size: 14px;
-  background-color: white;
+  font-family: inherit;
   transition: all 0.3s ease;
-  box-sizing: border-box;
+  background: white;
 }
 
 .form-group input:focus,
-.form-group select:focus {
+.form-group select:focus,
+.form-group textarea:focus {
   outline: none;
-  border-color: #2f80ed;
-  box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.1);
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .form-group textarea {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
-  font-family: Arial, sans-serif;
   resize: vertical;
-  transition: all 0.3s ease;
-  box-sizing: border-box;
+  min-height: 100px;
 }
 
-.form-group textarea:focus {
-  outline: none;
-  border-color: #2f80ed;
-  box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.1);
-}
-
-.char-count {
-  display: block;
-  font-size: 12px;
-  color: #999;
-  margin-top: 6px;
-  text-align: right;
+.form-group select {
+  cursor: pointer;
 }
 
 .form-actions {
   display: flex;
   gap: 12px;
-  margin-top: 28px;
+  justify-content: flex-end;
+  margin-top: 30px;
   padding-top: 20px;
-  border-top: 1px solid #eee;
+  border-top: 2px solid #f0f0f0;
 }
 
-.submit-btn, .cancel-btn {
-  flex: 1;
-  padding: 12px 20px;
+.btn-cancel,
+.btn-submit {
+  padding: 12px 28px;
   border: none;
-  border-radius: 6px;
-  font-size: 14px;
+  border-radius: 10px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.submit-btn {
-  background-color: #4CAF50;
+.btn-cancel {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.btn-cancel:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.btn-submit {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
-.submit-btn:hover {
-  background-color: #45a049;
+.btn-submit:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
-.submit-btn:active {
+.btn-submit:active {
   transform: translateY(0);
 }
 
-.cancel-btn {
-  background-color: #f5f5f5;
-  color: #333;
-  border: 1px solid #ddd;
+.btn-icon {
+  font-size: 20px;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
 }
 
-.cancel-btn:hover {
-  background-color: #eeeeee;
-  border-color: #ccc;
-}
+/* Responsive */
+@media (max-width: 768px) {
+  .modal-container {
+    width: 95%;
+    max-height: 95vh;
+  }
 
-.preview img {
-  width: 120px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 6px;
-  margin-top: 8px;
-}
+  .modal-header {
+    padding: 20px;
+  }
 
-/* Scrollbar styling */
-form::-webkit-scrollbar {
-  width: 6px;
-}
+  .modal-header h2 {
+    font-size: 20px;
+  }
 
-form::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
+  .field-form {
+    padding: 20px;
+  }
 
-form::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 3px;
-}
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
 
-form::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .btn-cancel,
+  .btn-submit {
+    width: 100%;
+    justify-content: center;
+  }
 }
 </style>

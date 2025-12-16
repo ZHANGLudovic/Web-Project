@@ -1,7 +1,7 @@
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database("./database.db");
 
-console.log("🖼️  Updating field images...\n");
+console.log("Updating field images...\n");
 
 const imageUpdates = [
   { id: 1, image_url: '/Image/Foot.webp' },
@@ -28,21 +28,21 @@ db.serialize(() => {
       [image_url, id],
       function(err) {
         if (err) {
-          console.error(`❌ Error updating field ${id}:`, err);
+          console.error(`Error updating field ${id}:`, err);
         } else {
-          console.log(`✅ Updated field ${id} → ${image_url}`);
+          console.log(`Updated field ${id} -> ${image_url}`);
         }
         
         completed++;
         if (completed === imageUpdates.length) {
-          console.log("\n📋 Verification - All fields:\n");
+          console.log("\nVerification - All fields:\n");
           
           db.all("SELECT id, nom, sport, image_url FROM fields ORDER BY id", [], (err, rows) => {
             if (err) {
               console.error("Error:", err);
             } else {
               console.table(rows);
-              console.log("\n✨ Images updated successfully!\n");
+              console.log("\nImages updated successfully!\n");
             }
             db.close();
           });

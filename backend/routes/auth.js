@@ -44,7 +44,7 @@ router.post("/register", async (req, res) => {
         return res.status(500).json({ error: "Failed to create account" });
       }
 
-      console.log("✅ User registered successfully:", email);
+      console.log("User registered successfully:", email);
 
       res.status(201).json({
         message: "Registration successful",
@@ -97,7 +97,7 @@ router.post("/login", async (req, res) => {
       // Remove password from response
       const { password: _, ...userWithoutPassword } = user;
 
-      console.log("✅ Login successful for:", user.email);
+      console.log("Login successful for:", user.email);
 
       res.json({
         message: "Login successful",

@@ -2,7 +2,7 @@ const sqlite3 = require("sqlite3").verbose();
 const bcrypt = require("bcrypt");
 const db = new sqlite3.Database("./database.db");
 
-console.log("🧹 Cleaning admin accounts...\n");
+console.log("Cleaning admin accounts...\n");
 
 db.serialize(() => {
   // First, show all current users
@@ -22,7 +22,7 @@ db.serialize(() => {
         return;
       }
 
-      console.log(`\n🗑️  Deleted ${this.changes} admin account(s)`);
+      console.log(`\nDeleted ${this.changes} admin account(s)`);
 
       // Create the single admin account
       const adminPassword = bcrypt.hashSync('admin123', 10);
@@ -36,14 +36,14 @@ db.serialize(() => {
           return;
         }
 
-        console.log("\n✅ New admin account created!");
-        console.log("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        console.log("📧 Admin Login Credentials:");
-        console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        console.log("\nNew admin account created!");
+        console.log("\n-------------------------------");
+        console.log("Admin Login Credentials:");
+        console.log("-------------------------------");
         console.log("Email:    admin@sportcity.com");
         console.log("Password: admin123");
         console.log("Role:     admin");
-        console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+        console.log("-------------------------------\n");
 
         // Show final user list
         db.all("SELECT id, email, username, role FROM users", [], (err, finalUsers) => {
@@ -59,12 +59,12 @@ db.serialize(() => {
           const adminCount = finalUsers.filter(u => u.role === 'admin').length;
           const userCount = finalUsers.filter(u => u.role === 'user').length;
 
-          console.log(`\n📊 Summary:`);
-          console.log(`   👑 Admins: ${adminCount}`);
-          console.log(`   👤 Users:  ${userCount}`);
-          console.log(`   📝 Total:  ${finalUsers.length}\n`);
+          console.log("\nSummary:");
+          console.log(`   Admins: ${adminCount}`);
+          console.log(`   Users:  ${userCount}`);
+          console.log(`   Total:  ${finalUsers.length}\n`);
 
-          console.log("✨ Cleanup complete!\n");
+          console.log("Cleanup complete!\n");
           db.close();
         });
       });

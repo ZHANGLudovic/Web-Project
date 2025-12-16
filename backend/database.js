@@ -154,20 +154,12 @@ db.serialize(() => {
     
     db.run(`
       INSERT OR IGNORE INTO users (id, email, username, password, role)
-      VALUES 
-        (1, 'admin@sportcity.com', 'admin', ?, 'admin'),
-        (2, 'john_doe@email.com', 'john_doe', ?, 'user'),
-        (3, 'sarah_smith@email.com', 'sarah_smith', ?, 'user'),
-        (4, 'mike_johnson@email.com', 'mike_johnson', ?, 'user'),
-        (5, 'emma_wilson@email.com', 'emma_wilson', ?, 'user'),
-        (6, 'alex_brown@email.com', 'alex_brown', ?, 'user'),
-        (7, 'lisa_davis@email.com', 'lisa_davis', ?, 'user'),
-        (8, 'david_miller@email.com', 'david_miller', ?, 'user')
-    `, [adminPassword, userPassword, userPassword, userPassword, userPassword, userPassword, userPassword, userPassword], (err) => {
-      if (err && !err.message.includes('UNIQUE constraint failed')) {
-        console.error('Error creating users:', err);
+      VALUES (1, 'admin@sportcity.com', 'admin', ?, 'admin')
+    `, [adminPassword], (err) => {
+      if (err) {
+        console.error('Error creating admin user:', err);
       } else {
-        console.log('✅ Demo users ready');
+        console.log('Admin user ready: admin@sportcity.com / admin123');
       }
     });
   } catch (error) {

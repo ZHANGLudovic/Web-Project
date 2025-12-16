@@ -31,6 +31,27 @@ app.use("/sports", sportsRoutes);
 app.use("/reviews", reviewsRoutes);
 app.use("/reservations", reservationsRoutes);
 
+// Debug routes - REMOVE IN PRODUCTION
+app.get("/debug/users", (req, res) => {
+  const db = require("./database");
+  db.all("SELECT id, email, username, role, created_at FROM users", [], (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(rows);
+  });
+});
+
+app.get("/debug/fields", (req, res) => {
+  const db = require("./database");
+  db.all("SELECT id, nom, sport, image_url FROM fields ORDER BY id", [], (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(rows);
+  });
+});
+
 // Health check endpoint
 app.get("/health", (req, res) => {
   res.json({ 

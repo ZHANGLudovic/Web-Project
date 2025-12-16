@@ -2,7 +2,7 @@
     <div v-if="field" class="rental-modal">
         <div class="modal-overlay" @click="$emit('close')"></div>
         <div class="modal-content">
-            <button class="close-btn" @click="$emit('close')">✕</button>
+            <button class="close-btn" @click="$emit('close')">×</button>
             
             <div class="rental-header">
                 <h2>{{ field.nom }}</h2>
@@ -35,7 +35,7 @@
                             :class="getSlotClass(slot)"
                         >
                             {{ slot }}
-                            <span v-if="isSlotReserved(slot)" class="reserved-icon">🔒</span>
+                            <span v-if="isSlotReserved(slot)" class="reserved-icon">Locked</span>
                         </button>
                     </div>
                     <p v-if="!loadingSlots && availableSlots.length === 0" class="no-slots">
@@ -463,10 +463,12 @@ export default {
 }
 
 .reserved-icon {
-    position: absolute;
-    top: 2px;
-    right: 4px;
-    font-size: 10px;
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font-size: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
 .time-slot:disabled {
