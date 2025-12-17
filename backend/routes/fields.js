@@ -137,4 +137,43 @@ router.delete("/:id", (req, res) => {
   });
 });
 
+// Update field by ID (admin only)
+router.put("/:id", (req, res) => {
+  const { id } = req.params;
+  const { nom, sport, adresse, ville, taille, horaires, prix, description, image_url } = req.body;
+
+  if (!nom || !sport || !adresse || !ville || !taille || !prix) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  const query = `
+    UPDATE fields 
+    SET nom = ?, sport = ?, adresse = ?, ville = ?, taille = ?, 
+        horaires = ?, prix = ?, description = ?, image_url = ?,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = ?
+  `;
+
+  db.run(query, [nom, sport, adresse, ville, taille, horaires, prix, description, image_url, id], function(err) {
+    if (err) {
+      console.error("Error updating field:", err);
+      return res.status(500).json({ error: "Failed to update field" });
+    }
+
+    if (this.changes === 0) {
+      return res.status(404).json({ error: "Field not found" });
+    }
+
+    console.log("Field updated successfully:", id);
+
+    res.json({
+      message: "Field updated successfully",
+      field: {
+        id: parseInt(id),
+        nom, sport, adresse, ville, taille, horaires, prix, description, image_url
+      }
+    });
+  });
+});
+
 module.exports = router;

@@ -164,9 +164,32 @@ export default {
                 this.$emit('edit-field', field);
             }
         },
-        handleDelete(id) {
-            this.fetchedFields = this.fetchedFields.filter(f => f.id !== id);
-            this.$emit('update-fields', this.fields.filter(f => f.id !== id));
+        async handleDelete(id) {
+            const field = this.allFields.find(f => f.id === id);
+            if (!field) return;
+
+            if (!confirm(`Are you sure you want to delete "${field.nom}"?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3000/fields/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    // Remove from local state
+                    this.fetchedFields = this.fetchedFields.filter(f => f.id !== id);
+                    // Refresh to show updated list
+                    await this.fetchFields();
+                } else {
+                    const error = await response.json();
+                    alert('Error deleting field: ' + error.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to delete field');
+            }
         },
         handleRent(id) {
             const field = this.allFields.find(f => f.id === id);

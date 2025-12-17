@@ -102,24 +102,9 @@ methods: {
       alert('Failed to create field');
     }
   },
-  submitEditField(fieldData) {
-    const index = this.fields.findIndex(f => f.id === this.fieldToEdit.id);
-    if (index !== -1) {
-      this.fields[index] = {
-        ...this.fields[index],
-        nom: fieldData.name,
-        sport: fieldData.type,
-        adresse: fieldData.location,
-        ville: fieldData.ville,
-        taille: fieldData.size,
-        horaires: fieldData.horaires,
-        date: fieldData.date,
-        prix: fieldData.prix,
-        description: fieldData.description,
-        image: fieldData.image ?? this.fields[index].image
-      };
-    }
-    this.$emit('update-fields', this.fields);
+  submitEditField() {
+    // The API call is now handled in EditFieldForm.vue
+    // Just refresh the view to show updated data
     this.fieldRefresh++;
     this.showEditForm = false;
   },
