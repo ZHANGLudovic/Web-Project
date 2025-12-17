@@ -46,7 +46,7 @@
     </button>
 
     <div class="pagination-info">
-      Page {{ currentPage }} of {{ totalPages }} ({{ totalItems }} terrains)
+      Page {{ currentPage }} of {{ totalPages }} ({{ totalItems }} fields)
     </div>
   </div>
 </template>
@@ -112,29 +112,29 @@ export default {
   min-width: 40px;
   height: 40px;
   padding: 8px 12px;
-  border: 2px solid #e0e0e0;
-  background: white;
-  color: #333;
-  border-radius: 8px;
+  border: 2px solid var(--border-color);
+  background: var(--bg-white);
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--transition);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .pagination-btn:hover:not(:disabled) {
-  border-color: #667eea;
+  border-color: var(--primary-color);
   background-color: #f5f7ff;
   transform: translateY(-2px);
 }
 
 .pagination-btn.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--primary-gradient);
   color: white;
-  border-color: #667eea;
+  border-color: var(--primary-color);
 }
 
 .pagination-btn:disabled {
@@ -145,7 +145,7 @@ export default {
 
 .pagination-info {
   margin-left: 15px;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
   font-weight: 500;
 }

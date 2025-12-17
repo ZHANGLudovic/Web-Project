@@ -8,7 +8,7 @@
 
         <div>
             <FieldCard
-            v-for="f in filteredFields"
+            v-for="f in paginatedFields"
             :key="f.id"
             :field="f"
             :is-admin="isAdmin"
@@ -19,6 +19,15 @@
             @cancel-reservation="handleCancelReservation"
             />
         </div>
+
+        <Pagination 
+            v-if="filteredFields.length > 0"
+            :current-page="currentPage"
+            :total-pages="totalPages"
+            :total-items="filteredFields.length"
+            @page-change="handlePageChange"
+        />
+
         <FieldDetails v-if="showDetails" :field="fieldDetails" @close="showDetails = false" />
         <RentalDashboard v-if="showRental" :field="rentalField" @close="showRental = false" @booking-confirmed="handleBookingConfirmed" />
     </div>
@@ -31,11 +40,12 @@ import SportFilters from '../components/SportFilters.vue';
 import FieldCard from '../components/FieldCard.vue';
 import FieldDetails from '../components/FieldDetails.vue';
 import RentalDashboard from '../components/RentalDashboard.vue';
+import Pagination from '../components/Pagination.vue';
 import api from '../api.js';
 
 export default {
     name: 'HomePage',
-    components: { SearchBar, SportFilters, FieldCard, FieldDetails, RentalDashboard },
+    components: { SearchBar, SportFilters, FieldCard, FieldDetails, RentalDashboard, Pagination },
 
 
     props: ['fields'],
@@ -43,13 +53,15 @@ export default {
 
     data() {
         return {
-        selectedSports: ['all'],
-        showDetails: false,
-        fieldDetails: null,
-        searchQuery: '',
-        fetchedFields: [],
-        showRental: false,
-        rentalField: null
+            selectedSports: ['all'],
+            showDetails: false,
+            fieldDetails: null,
+            searchQuery: '',
+            fetchedFields: [],
+            showRental: false,
+            rentalField: null,
+            currentPage: 1,
+            itemsPerPage: 5
         };
     },
 
@@ -92,6 +104,20 @@ export default {
 
         return result;
     },
+    totalPages() {
+        return Math.ceil(this.filteredFields.length / this.itemsPerPage);
+    },
+    paginatedFields() {
+        const start = (this.currentPage - 1) * this.itemsPerPage;
+        const end = start + this.itemsPerPage;
+        return this.filteredFields.slice(start, end);
+    }
+    },
+    
+    watch: {
+        filteredFields() {
+            this.currentPage = 1;
+        }
     },
     
     methods: {
@@ -159,6 +185,9 @@ export default {
                 console.log(`Reservation for "${field.nom}" cancelled`);
                 this.$toast.success(`"${field.nom}" reservation cancelled`, 'Booking Cancelled');
             }
+        },
+        handlePageChange(page) {
+            this.currentPage = page;
         }
     }
 };
@@ -173,14 +202,12 @@ export default {
     animation: fadeIn 0.5s ease;
 }
 
-/* slightly adjust filters-section visuals to work with panel-soft */
 .filters-section {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     gap: 20px;
     margin-bottom: 30px;
-    /* background/padding now comes from .panel-soft */
     padding: 25px;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -189,12 +216,10 @@ export default {
     flex-wrap: wrap;
 }
 
-/* Cards container */
 .container > div:not(.filters-section) {
     animation: fadeIn 0.5s ease;
 }
 
-/* Individual field cards will animate in staggered */
 @keyframes slideInDown {
     from {
         opacity: 0;
@@ -217,7 +242,6 @@ export default {
     }
 }
 
-/* Responsive design */
 @media (max-width: 1024px) {
     .container {
         padding: 20px 15px;
