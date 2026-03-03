@@ -203,7 +203,3 @@ This project was developed for academic purposes during an international exchang
 
 ## Contributors
 Timothée BOISSEAUX, Nazim MEKIDECHE and Ludovic ZHANG
-
----
-
-Made with ❤️ by SportCity Team
