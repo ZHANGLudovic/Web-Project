@@ -1,74 +1,68 @@
-# 🏟️ SportCity - Sports Field Booking Platform
+# SportCity - Sports Field Booking Platform
 
-A modern, full-stack web application for booking sports fields online. Built with Vue.js and Node.js.
+SportCity is a modern, full-stack web application designed to simplify the process of booking sports facilities online. By bridging the gap between facility managers and athletes, the platform offers a streamlined way to find, schedule, and manage sports sessions. The project is built using a decoupled architecture with a Vue.js frontend and a Node.js backend.
 
-## ✨ Features
+## Project Overview
 
-### User Features
-- 🔐 **Authentication System** - Secure login and registration
-- 🏟️ **Browse Fields** - View available sports fields with images
-- 🔍 **Search & Filter** - Filter by sport type, city, and search by name
-- 📅 **Real-time Booking** - Book available time slots with live availability
-- 📊 **My Reservations** - View and manage your bookings
-- ⏰ **Time Slot Management** - Hourly booking system (08:00 - 22:00)
+The goal of SportCity is to provide a frictionless user experience for sports enthusiasts while giving administrators the tools they need to manage their inventory effectively. Whether you are looking for a quick football match or a scheduled tennis session, the platform handles the logic of time slots and availability in real-time.
 
-### Admin Features
-- ➕ **Add Fields** - Create new sports fields
-- ✏️ **Edit Fields** - Modify existing field details
-- 🗑️ **Delete Fields** - Remove fields from the system
-- 👥 **User Management** - Admin account with elevated privileges
+### For Users
+* **Secure Access**: A complete authentication system for private account management.
+* **Discovery**: Browse various sports fields with detailed information and high-quality imagery.
+* **Smart Search**: Filter facilities by sport type (Football, Basketball, Tennis, Volleyball, Badminton) or location.
+* **Booking Engine**: A real-time reservation system that manages hourly slots from 08:00 to 22:00.
+* **Personal Dashboard**: A dedicated space to track, view, and manage upcoming or past reservations.
 
-### Sports Supported
-- ⚽ Football
-- 🏀 Basketball
-- 🎾 Tennis
-- 🏐 Volleyball
-- 🏸 Badminton
+### For Administrators
+* **Facility Management**: Full CRUD (Create, Read, Update, Delete) capabilities for sports fields.
+* **User Oversight**: Elevated privileges to manage the user base and system settings.
+* **Operational Control**: Tools to monitor bookings and ensure the platform remains up to date.
 
-## 🛠️ Tech Stack
+---
+
+## Technical Architecture
+
+The application is split into two main directories to separate concerns and allow for independent scaling or updates.
 
 ### Frontend
-- **Vue.js 3** - Progressive JavaScript framework
-- **Vue Router** - Client-side routing
-- **CSS3** - Modern styling with CSS variables
-- **Vite** - Next generation frontend tooling
+The client side is built as a Single Page Application (SPA) to ensure a smooth, desktop-like feel.
+* **Framework**: Vue.js 3 (Composition API)
+* **Routing**: Vue Router for seamless navigation.
+* **Styling**: Modern CSS3 using custom variables for a consistent purple-themed UI.
+* **Build Tool**: Vite for fast development and optimized production builds.
 
 ### Backend
-- **Node.js** - JavaScript runtime
-- **Express.js** - Web application framework
-- **SQLite3** - Embedded relational database
-- **bcrypt** - Password hashing
-- **CORS** - Cross-origin resource sharing
+The server handles data persistence, business logic, and security.
+* **Runtime**: Node.js with the Express.js framework.
+* **Database**: SQLite3 for a lightweight, file-based relational storage solution.
+* **Security**: bcrypt for industry-standard password hashing and CORS for secure cross-origin requests.
 
-## 📁 Project Structure
+
+
+---
+
+## Project Structure
 
 ```
 Web-Project/
-├── frontend/
+├── frontend/             # Vue.js application
 │   ├── src/
-│   │   ├── components/     # Vue components
-│   │   ├── views/          # Page views
-│   │   ├── Image/          # Static images
-│   │   ├── App.vue         # Root component
-│   │   ├── main.js         # Entry point
-│   │   └── router.js       # Route configuration
+│   │   ├── components/   # Reusable UI components
+│   │   ├── views/        # Page-level components
+│   │   ├── router.js     # Client-side navigation
+│   │   └── main.js       # App initialization
 │   └── package.json
 │
-├── backend/
-│   ├── routes/             # API routes
-│   │   ├── auth.js         # Authentication
-│   │   ├── fields.js       # Field management
-│   │   ├── reservations.js # Booking system
-│   │   └── ...
-│   ├── scripts/            # Utility scripts
-│   ├── database.js         # Database setup
-│   ├── index.js            # Server entry point
+├── backend/              # Node.js API
+│   ├── routes/           # API endpoints (auth, fields, reservations)
+│   ├── database.js       # SQLite configuration and seeding
+│   ├── index.js          # Server entry point
 │   └── package.json
-│
 └── readme.md
+
 ```
 
-## 🚀 Installation
+## Installation
 
 ### Prerequisites
 - Node.js (v14 or higher)
@@ -92,7 +86,7 @@ cd ../frontend
 npm install
 ```
 
-## ▶️ Running the Application
+## Running the Application
 
 ### Start Backend Server
 ```bash
@@ -108,14 +102,14 @@ npm run dev
 ```
 Application will run on `http://localhost:8080`
 
-## 👤 Default Admin Account
+## Default Admin Account
 
 ```
 Email: admin@sportcity.com
 Password: admin123
 ```
 
-## 📡 API Endpoints
+## API Endpoints
 
 ### Authentication
 - `POST /auth/register` - Register new user
@@ -135,7 +129,7 @@ Password: admin123
 - `POST /reservations` - Create new reservation
 - `DELETE /reservations/:id` - Cancel reservation
 
-## 🗄️ Database Schema
+## Database Schema
 
 ### Tables
 - **users** - User accounts and authentication
@@ -145,16 +139,8 @@ Password: admin123
 - **sports** - Available sports types
 - **reviews** - Field reviews and ratings
 
-## 🎨 Design Features
 
-- 🌈 Modern gradient UI with purple theme
-- 📱 Fully responsive design
-- ✨ Smooth animations and transitions
-- 🎯 Intuitive user interface
-- 🔔 Toast notifications for user feedback
-- 📄 Pagination system (5 items per page)
-
-## 🔧 Utility Scripts
+## Utility Scripts
 
 ```bash
 # Update field images
@@ -167,7 +153,7 @@ npm run clean-admins
 npm run make-admin
 ```
 
-## 🚧 Development
+## Development
 
 ### Backend Development
 ```bash
@@ -181,7 +167,7 @@ cd frontend
 npm run dev  # Hot module replacement enabled
 ```
 
-## 📦 Build for Production
+## Build for Production
 
 ### Frontend
 ```bash
@@ -189,7 +175,7 @@ cd frontend
 npm run build
 ```
 
-## 🔐 Security Features
+## Security Features
 
 - Password hashing with bcrypt
 - Foreign key constraints
@@ -197,7 +183,7 @@ npm run build
 - SQL injection prevention
 - CORS configuration
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Database Issues
 If you encounter database issues, delete `database.db` and restart the server. It will recreate the database with seed data.
@@ -211,23 +197,12 @@ const PORT = process.env.PORT || 3001;
 # Change frontend port in vite.config.js or package.json
 ```
 
-## 📝 License
+## Academic Context
 
-This project is licensed under the MIT License.
+This project was developed for academic purposes during an international exchange program at **Southeast University (SEU)** in Nanjing, China in the 3rd year of the Engineering Degree at **EFREI Paris**. The application serves as a practical application of full-stack development principles.
 
-## 👥 Contributors
-
-- Your Name - Initial work
-
-## 🙏 Acknowledgments
-
-- Vue.js team for the amazing framework
-- Express.js community
-- All open-source contributors
-
-## 📧 Contact
-
-For any inquiries, please contact: contact@sportcity.com
+## Contributors
+Timothée BOISSEAUX, Nazim MEKIDECHE and Ludovic ZHANG
 
 ---
 
